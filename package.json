@@ -1,0 +1,21 @@
+{
+  "name": "ticket-commander",
+  "version": "0.5.0",
+  "description": "A blockchain-based ticket sales platform.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "compile": "hardhat compile",
+    "test": "hardhat test"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.3"
+  }
+}
