@@ -3,50 +3,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="connect.css">
+    <link rel="stylesheet" type="text/css" href="wallet.css">
     <script type="text/javascript" src="scripts/ethers.js" defer></script>
+    <script type="text/javascript" src="scripts/connect.js" defer></script>
+    <script type="text/javascript" src="scripts/wallet.js" defer></script>
     <script type="text/javascript" src="scripts/index.js" defer></script>
   </head>
-  <body>
-    <div>
-      <form id="form" action="#">
-        <div class="form-input-container">
-          <label for="public-input">Public</label>
-          <input
-            id="public-input"
-            class="form-input"
-            name="public"
-            type="text"
-            placeholder="Public"
-          >
-        </div>
-        <div class="form-input-container">
-          <label for="private-input">Private</label>
-          <input
-            id="private-input"
-            class="form-input"
-            name="private"
-            type="text"
-            placeholder="Private"
-          >
-        </div>
-        <div class="form-input-container">
-          <label for="chain-url-input">Chain URL</label>
-          <input
-            id="chain-url-input"
-            class="form-input"
-            name="chain-url"
-            type="text"
-            placeholder="Chain URL"
-          >
-        </div>
-        <div>
-          <button id="form-button" type="submit">
-            Connect
-          </button>
-        </div>
-      </form>
-      <div id="output"></div>
-    </div>
-  </body>
+  <body id="body"></body>
 </html>

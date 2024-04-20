@@ -5,9 +5,15 @@ contract Ticket {
     address manager;
     uint256 _maxAmount;
     uint256 _idCounter;
-    mapping(uint256 => address) _owners;
-    mapping(uint256 => uint256) _prices;
-    mapping(uint256 => bool) _isForSale;
+
+    struct TicketInfo {
+        uint256 id;
+        address owner;
+        uint256 price;
+        bool isForSale;
+    }
+
+    mapping(uint256 => TicketInfo) _tickets;
     mapping(uint256 => mapping(address => bool)) _isApproved;
     mapping(uint256 => mapping(address => bool)) _buyers;
     mapping(uint256 => address[]) _buyerAddresses;
@@ -24,7 +30,10 @@ contract Ticket {
     }
 
     modifier requireOwner(uint256 _ticketId) {
-        require(msg.sender == _owners[_ticketId], "Must be ticket owner");
+        require(
+            msg.sender == _tickets[_ticketId].owner,
+            "Must be ticket owner"
+        );
         _;
     }
 
@@ -37,7 +46,7 @@ contract Ticket {
     }
 
     modifier requireForSale(uint256 _ticketId) {
-        require(_isForSale[_ticketId], "Must be for sale");
+        require(_tickets[_ticketId].isForSale, "Must be for sale");
         _;
     }
 
@@ -62,42 +71,62 @@ contract Ticket {
     function create(uint256 _price) public requireManager returns (uint256) {
         require(totalAmount() < maxAmount(), "No tickets remaining");
         uint256 _ticketId = _idCounter;
-        _owners[_ticketId] = msg.sender;
-        _prices[_ticketId] = _price;
+        TicketInfo storage _ticket = _tickets[_ticketId];
+        _ticket.id = _ticketId;
+        _ticket.owner = msg.sender;
+        _ticket.price = _price;
         _idCounter++;
         return _ticketId;
     }
 
     function ownerOf(uint256 _ticketId) public view returns (address) {
-        return _owners[_ticketId];
+        return _tickets[_ticketId].owner;
     }
 
     function priceOf(uint256 _ticketId) public view returns (uint256) {
-        return _prices[_ticketId];
+        return _tickets[_ticketId].price;
     }
 
     function isForSale(uint256 _ticketId) public view returns (bool) {
-        return _isForSale[_ticketId];
+        return _tickets[_ticketId].isForSale;
     }
 
-    function list(uint256 _ticketId) public requireOwner(_ticketId) {
-        _isForSale[_ticketId] = true;
-    }
-
-    function cancelSale(uint256 _ticketId) public requireOwner(_ticketId) {
-        _clearSaleInfo(_ticketId);
-    }
-
-    function bid(uint256 _ticketId) public requireForSale(_ticketId) {
-        require(!_buyers[_ticketId][msg.sender], "Already a buyer");
-        _buyers[_ticketId][msg.sender] = true;
-        _buyerAddresses[_ticketId].push(msg.sender);
+    function allForSale() public view returns (TicketInfo[] memory) {
+        uint256[] memory _ticketIds = new uint256[](totalAmount());
+        uint256 _count;
+        for (uint id = 1; id <= totalAmount(); id++) {
+            if (isForSale(id)) {
+                _ticketIds[_count] = id;
+                _count++;
+            }
+        }
+        TicketInfo[] memory _forSaleTickets = new TicketInfo[](_count);
+        for (uint i = 0; i < _count; i++) {
+            _forSaleTickets[i] = _tickets[_ticketIds[i]];
+        }
+        return _forSaleTickets;
     }
 
     function buyersOf(
         uint256 _ticketId
     ) public view returns (address[] memory) {
         return _buyerAddresses[_ticketId];
+    }
+
+    function list(uint256 _ticketId) public requireOwner(_ticketId) {
+        _tickets[_ticketId].isForSale = true;
+    }
+
+    function cancelSale(uint256 _ticketId) public requireOwner(_ticketId) {
+        _clearSaleInfo(_ticketId);
+    }
+
+    function requestPurchase(
+        uint256 _ticketId
+    ) public requireForSale(_ticketId) {
+        require(!_buyers[_ticketId][msg.sender], "Already a buyer");
+        _buyers[_ticketId][msg.sender] = true;
+        _buyerAddresses[_ticketId].push(msg.sender);
     }
 
     function dismissBuyer(
@@ -122,10 +151,11 @@ contract Ticket {
     function buy(
         uint256 _ticketId
     ) public payable requireBuyer(_ticketId) requireApproval(_ticketId) {
-        require(msg.value == _prices[_ticketId], "Incorrect amount of money");
+        TicketInfo storage _ticket = _tickets[_ticketId];
+        require(msg.value == _ticket.price, "Incorrect amount of money");
         address _owner = ownerOf(_ticketId);
         payable(_owner).transfer(msg.value);
-        _owners[_ticketId] = msg.sender;
+        _ticket.owner = msg.sender;
         _clearSaleInfo(_ticketId);
     }
 
@@ -134,11 +164,12 @@ contract Ticket {
     }
 
     function _clearSaleInfo(uint256 _ticketId) private {
+        TicketInfo storage _ticket = _tickets[_ticketId];
         for (uint i = 0; i < _buyerAddresses[_ticketId].length; i++) {
             _buyers[_ticketId][_buyerAddresses[_ticketId][i]] = false;
             _isApproved[_ticketId][_buyerAddresses[_ticketId][i]] = false;
         }
         delete _buyerAddresses[_ticketId];
-        _isForSale[_ticketId] = false;
+        _ticket.isForSale = false;
     }
 }
