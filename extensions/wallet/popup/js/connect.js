@@ -5,12 +5,12 @@ class ConnectView extends HTMLElement {
 
   async connectAccount(account) {
     const data = new FormData(account);
-    if (!data.get('public') || !data.get('private') || !data.get('chain')) {
+    if (!data.get('account') || !data.get('private') || !data.get('chain')) {
       return;
     }
     await browser.storage.local.set({
-      public: data.get('public'),
-      private: data.get('private'),
+      account: data.get('account'),
+      privateKey: data.get('private'),
       chainUrl: data.get('chain'),
     });
     const body = document.getElementById('body');
@@ -27,43 +27,43 @@ class ConnectView extends HTMLElement {
       await this.connectAccount(event.target);
     };
 
-    // Public Input
-    const publicContainer = document.createElement('div');
-    publicContainer.className = 'connect-input-container';
+    // Account Input
+    const accountContainer = document.createElement('div');
+    accountContainer.className = 'connect-input-container';
 
-    const publicLabel = document.createElement('label');
-    publicLabel.setAttribute('for', 'public-input');
-    publicLabel.innerText = 'Public';
+    const accountLabel = document.createElement('label');
+    accountLabel.setAttribute('for', 'account-input');
+    accountLabel.innerText = 'Account Address';
 
-    const publicInput = document.createElement('input');
-    publicInput.id = 'public-input';
-    publicInput.className = 'connect-input';
-    publicInput.name = 'public';
-    publicInput.type = 'text';
-    publicInput.placeholder = 'Public';
+    const accountInput = document.createElement('input');
+    accountInput.id = 'account-input';
+    accountInput.className = 'connect-input';
+    accountInput.name = 'account';
+    accountInput.type = 'text';
+    accountInput.placeholder = 'Account Address';
 
-    publicContainer.appendChild(publicLabel);
-    publicContainer.appendChild(publicInput);
-    form.appendChild(publicContainer);
+    accountContainer.appendChild(accountLabel);
+    accountContainer.appendChild(accountInput);
+    form.appendChild(accountContainer);
 
-    // Private Input
-    const privateContainer = document.createElement('div');
-    privateContainer.className = 'connect-input-container';
+    // Private Key Input
+    const privateKeyContainer = document.createElement('div');
+    privateKeyContainer.className = 'connect-input-container';
 
-    const privateLabel = document.createElement('label');
-    privateLabel.setAttribute('for', 'private-input');
-    privateLabel.innerText = 'Private';
+    const privateKeyLabel = document.createElement('label');
+    privateKeyLabel.setAttribute('for', 'private-key-input');
+    privateKeyLabel.innerText = 'Private Key';
 
-    const privateInput = document.createElement('input');
-    privateInput.id = 'private-input';
-    privateInput.className = 'connect-input';
-    privateInput.name = 'private';
-    privateInput.type = 'text';
-    privateInput.placeholder = 'Private';
+    const privateKeyInput = document.createElement('input');
+    privateKeyInput.id = 'private-key-input';
+    privateKeyInput.className = 'connect-input';
+    privateKeyInput.name = 'private';
+    privateKeyInput.type = 'text';
+    privateKeyInput.placeholder = 'Private Key';
 
-    privateContainer.appendChild(privateLabel);
-    privateContainer.appendChild(privateInput);
-    form.appendChild(privateContainer);
+    privateKeyContainer.appendChild(privateKeyLabel);
+    privateKeyContainer.appendChild(privateKeyInput);
+    form.appendChild(privateKeyContainer);
 
     // Chain URL Input
     const chainUrlContainer = document.createElement('div');

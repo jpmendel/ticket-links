@@ -4,7 +4,7 @@ class WalletView extends HTMLElement {
   }
 
   async disconnect() {
-    await browser.storage.local.remove(['public', 'private', 'chainUrl']);
+    await browser.storage.local.remove(['account', 'privateKey', 'chainUrl']);
     const body = document.getElementById('body');
     body.innerHTML = '';
     body.appendChild(document.createElement('connect-view'));

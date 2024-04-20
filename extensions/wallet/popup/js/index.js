@@ -1,15 +1,15 @@
 const setup = async () => {
   const data = await browser.storage.local.get([
-    'public',
-    'private',
+    'account',
+    'privateKey',
     'chainUrl',
   ]);
   const body = document.getElementById('body');
-  if (data.public && data.private && data.chainUrl) {
+  if (data.account && data.privateKey && data.chainUrl) {
     body.innerHTML = '';
     body.appendChild(document.createElement('wallet-view'));
   } else {
-    await browser.storage.local.remove(['public', 'private', 'chainUrl']);
+    await browser.storage.local.remove(['account', 'privateKey', 'chainUrl']);
     body.innerHTML = '';
     body.appendChild(document.createElement('connect-view'));
   }

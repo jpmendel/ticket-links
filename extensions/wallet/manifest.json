@@ -7,6 +7,12 @@
     "128": "icons/icon128.png"
   },
   "permissions": ["activeTab", "webRequest", "storage"],
+  "content_scripts": [
+    {
+      "matches": ["*://localhost/*"],
+      "js": ["scripts/loadWallet.js"]
+    }
+  ],
   "browser_action": {
     "default_icon": "icons/icon128.png",
     "default_title": "Wallet",
