@@ -4,15 +4,16 @@
   "description": "A blockchain-based ticket sales platform.",
   "author": "",
   "license": "MIT",
-  "main": "src/main.js",
+  "main": "site/main.js",
   "scripts": {
-    "start": "node src/main.js",
+    "start": "node site/main.js",
     "deploy": "hardhat node",
     "compile": "hardhat compile",
     "test": "hardhat test",
     "test:gas": "REPORT_GAS=true hardhat test"
   },
   "dependencies": {
+    "ejs": "^3.1.10",
     "express": "^4.19.2"
   },
   "devDependencies": {
