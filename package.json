@@ -2,16 +2,17 @@
   "name": "ticket-commander",
   "version": "0.5.0",
   "description": "A blockchain-based ticket sales platform.",
+  "author": "",
+  "license": "MIT",
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",
+    "deploy": "hardhat node",
     "compile": "hardhat compile",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test"
   },
-  "author": "",
-  "license": "MIT",
   "dependencies": {
-    "ejs": "^3.1.10",
     "express": "^4.19.2"
   },
   "devDependencies": {

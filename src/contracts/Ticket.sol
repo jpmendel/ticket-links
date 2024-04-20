@@ -105,6 +105,11 @@ contract Ticket {
         address _buyer
     ) public requireOwner(_ticketId) {
         _buyers[_ticketId][_buyer] = false;
+        for (uint i = 0; i < _buyerAddresses[_ticketId].length; i++) {
+            if (_buyerAddresses[_ticketId][i] == _buyer) {
+                _buyerAddresses[_ticketId][i] = address(0);
+            }
+        }
     }
 
     function approve(

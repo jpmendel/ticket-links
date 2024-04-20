@@ -1,1 +1,15 @@
-{}
+{
+  "manifest_version": 2,
+  "name": "Wallet",
+  "version": "0.5.0",
+  "description": "Represents a blockchain wallet in your browser.",
+  "icons": {
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["activeTab", "webRequest", "storage"],
+  "browser_action": {
+    "default_icon": "icons/icon128.png",
+    "default_title": "Wallet",
+    "default_popup": "index.html"
+  }
+}
