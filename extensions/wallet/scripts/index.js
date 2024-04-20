@@ -11,6 +11,10 @@ const connectAccount = async (account) => {
   });
 };
 
+const disconnect = async () => {
+  browser.storage.local.remove(['public', 'private', 'chainUrl']);
+};
+
 const displayError = async () => {};
 
 const setup = async () => {
