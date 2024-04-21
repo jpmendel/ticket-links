@@ -4,9 +4,11 @@ const main = async () => {
     'privateKey',
     'chainUrl',
   ]);
-  if (data.public && data.private && data.chainUrl) {
+  if (data.account && data.privateKey && data.chainUrl) {
+    console.log('Loaded Wallet');
     window.postMessage({ type: 'wallet', data }, '*');
   } else {
+    console.log('Wallet Not Connected');
     window.postMessage({ type: 'wallet', data: null }, '*');
   }
 };
