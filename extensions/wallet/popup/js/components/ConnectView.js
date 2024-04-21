@@ -41,6 +41,14 @@ class ConnectView extends HTMLElement {
     accountInput.name = 'account';
     accountInput.type = 'text';
     accountInput.placeholder = 'Account Address';
+    accountInput.onblur = async (event) => {
+      await browser.storage.session.set({ account: event.target.value });
+    };
+    browser.storage.session.get(['account']).then(({ account }) => {
+      if (account) {
+        accountInput.value = account;
+      }
+    });
 
     accountContainer.appendChild(accountLabel);
     accountContainer.appendChild(accountInput);
@@ -60,6 +68,14 @@ class ConnectView extends HTMLElement {
     privateKeyInput.name = 'private';
     privateKeyInput.type = 'text';
     privateKeyInput.placeholder = 'Private Key';
+    privateKeyInput.onblur = async (event) => {
+      await browser.storage.session.set({ privateKey: event.target.value });
+    };
+    browser.storage.session.get(['privateKey']).then(({ privateKey }) => {
+      if (privateKey) {
+        privateKeyInput.value = privateKey;
+      }
+    });
 
     privateKeyContainer.appendChild(privateKeyLabel);
     privateKeyContainer.appendChild(privateKeyInput);
@@ -79,6 +95,14 @@ class ConnectView extends HTMLElement {
     chainUrlInput.name = 'chain';
     chainUrlInput.type = 'text';
     chainUrlInput.placeholder = 'Chain URL';
+    chainUrlInput.onblur = async (event) => {
+      await browser.storage.session.set({ chainUrl: event.target.value });
+    };
+    browser.storage.session.get(['chainUrl']).then(({ chainUrl }) => {
+      if (chainUrl) {
+        chainUrlInput.value = chainUrl;
+      }
+    });
 
     chainUrlContainer.appendChild(chainUrlLabel);
     chainUrlContainer.appendChild(chainUrlInput);

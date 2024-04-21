@@ -5,13 +5,13 @@ class AccountView extends HTMLElement {
 
   connectedCallback() {
     const div = document.createElement('div');
-    getBalance().then((balance) => {
-      if (balance != null) {
+    getBalance()
+      .then((balance) => {
         div.innerText = `Balance: ${balance} ETH`;
-      } else {
+      })
+      .catch(() => {
         div.innerText = 'Wallet Not Connected';
-      }
-    });
+      });
 
     this.innerHTML = '';
     this.appendChild(div);

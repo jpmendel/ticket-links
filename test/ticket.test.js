@@ -13,6 +13,7 @@ describe('Ticket', () => {
 
     const Ticket = await ethers.getContractFactory('Ticket');
     ticket = await Ticket.deploy(manager, 10);
+    await ticket.waitForDeployment();
 
     // Create 5 tickets.
     for (let i = 0; i < 5; i++) {

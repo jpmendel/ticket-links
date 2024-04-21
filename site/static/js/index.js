@@ -1,3 +1,9 @@
+const loadAddresses = async () => {
+  const res = await fetch('/static/addr/address.json');
+  const addresses = await res.json();
+  app.addr = addresses;
+};
+
 const loadAbiFiles = async () => {
   const res = await fetch('/static/abi/Ticket.json');
   const ticket = await res.json();
@@ -22,10 +28,11 @@ const setup = async () => {
       linkWallet(event.data.data);
     }
   });
+  await loadAddresses();
   await loadAbiFiles();
   const body = document.getElementById('body');
   body.innerHTML = '';
-  body.appendChild(document.createElement('account-view'));
+  body.appendChild(document.createElement('main-view'));
 };
 
 window.onload = () => setup();

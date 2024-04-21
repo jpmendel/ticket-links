@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "matches": ["*://localhost/*"],
-      "js": ["scripts/loadWallet.js"]
+      "js": ["scripts/wallet.js"]
     }
   ],
   "browser_action": {
