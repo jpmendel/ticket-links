@@ -69,7 +69,7 @@ contract Ticket {
     }
 
     function create(uint256 _price) public requireManager returns (uint256) {
-        require(totalAmount() < maxAmount(), "No tickets remaining");
+        require(totalAmount() < maxAmount(), "Reached ticket limit");
         uint256 _ticketId = _idCounter;
         TicketInfo storage _ticket = _tickets[_ticketId];
         _ticket.id = _ticketId;
@@ -81,6 +81,22 @@ contract Ticket {
 
     function ownerOf(uint256 _ticketId) public view returns (address) {
         return _tickets[_ticketId].owner;
+    }
+
+    function ownedByMe() public view returns (TicketInfo[] memory) {
+        uint256[] memory _ticketIds = new uint256[](totalAmount());
+        uint256 _count;
+        for (uint id = 1; id <= totalAmount(); id++) {
+            if (ownerOf(id) == msg.sender) {
+                _ticketIds[_count] = id;
+                _count++;
+            }
+        }
+        TicketInfo[] memory _myTickets = new TicketInfo[](_count);
+        for (uint i = 0; i < _count; i++) {
+            _myTickets[i] = _tickets[_ticketIds[i]];
+        }
+        return _myTickets;
     }
 
     function priceOf(uint256 _ticketId) public view returns (uint256) {

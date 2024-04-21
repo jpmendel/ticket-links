@@ -3,6 +3,10 @@ class WalletView extends HTMLElement {
     super();
   }
 
+  connectedCallback() {
+    this.render();
+  }
+
   async disconnect() {
     await browser.storage.local.remove(['account', 'privateKey', 'chainUrl']);
     const body = document.getElementById('body');
@@ -10,7 +14,7 @@ class WalletView extends HTMLElement {
     body.appendChild(document.createElement('connect-view'));
   }
 
-  connectedCallback() {
+  render() {
     const mainContainer = document.createElement('div');
 
     const disconnectButton = document.createElement('button');

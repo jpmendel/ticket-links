@@ -3,6 +3,10 @@ class ConnectView extends HTMLElement {
     super();
   }
 
+  connectedCallback() {
+    this.render();
+  }
+
   async connectAccount(account) {
     const data = new FormData(account);
     if (!data.get('account') || !data.get('private') || !data.get('chain')) {
@@ -18,7 +22,7 @@ class ConnectView extends HTMLElement {
     body.appendChild(document.createElement('wallet-view'));
   }
 
-  connectedCallback() {
+  render() {
     const form = document.createElement('form');
     form.id = 'form';
     form.action = '#';
