@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { JsonRpcProvider } from 'ethers';
-import { BlockchainContext } from './Context';
-
+import { BlockChainContext } from './Context';
+import { AccountView } from './account/AccountView';
+import { TicketListView } from './tickets/TicketListView';
+import { EmptyStateView } from './EmptyStateView';
+import { BlockChainService } from '../service/BlockChainService';
 import './App.css';
 
-const App = () => {
-  const [provider, setProvider] = useState(null);
+export const App = () => {
+  const [service, setService] = useState(null);
+  const [wallet, setWallet] = useState(null);
 
   useEffect(() => {
     const handleMessage = (event) => {
@@ -14,9 +18,12 @@ const App = () => {
         const wallet = event.data.data;
         if (wallet) {
           const provider = new JsonRpcProvider(wallet.chainUrl || undefined);
-          setProvider(provider);
+          const service = new BlockChainService(provider, wallet);
+          setService(service);
+          setWallet(wallet);
         } else {
-          setProvider(null);
+          setService(null);
+          setWallet(null);
         }
       }
     };
@@ -26,11 +33,23 @@ const App = () => {
     };
   }, []);
 
+  useEffect(() => {}, []);
+
+  if (!wallet) {
+    return <EmptyStateView />;
+  }
+
   return (
-    <BlockchainContext.Provider value={{ provider }}>
-      <div>{provider != null ? 'Connected' : 'Not Connected'}</div>
-    </BlockchainContext.Provider>
+    <BlockChainContext.Provider value={{ service, wallet }}>
+      <div className="account-container">
+        <AccountView />
+      </div>
+      <div>
+        <TicketListView getTickets={() => service.getTicketsForSale()} />
+      </div>
+      <div>
+        <TicketListView getTickets={() => service.getMyTickets()} />
+      </div>
+    </BlockChainContext.Provider>
   );
 };
-
-export default App;

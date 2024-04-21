@@ -1,3 +1,3 @@
 import { createContext } from 'react';
 
-export const BlockchainContext = createContext({ provider: null });
+export const BlockChainContext = createContext({ service: null, wallet: null });
