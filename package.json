@@ -6,9 +6,10 @@
   "license": "MIT",
   "main": "site/main.js",
   "scripts": {
-    "start": "node site/main.js",
-    "deploy": "hardhat node",
+    "start:site": "node site/main.js",
+    "start:chain": "hardhat node",
     "compile": "hardhat compile",
+    "deploy": "hardhat ignition deploy ignition/modules/Ticket.js --network localhost",
     "test": "hardhat test",
     "test:gas": "REPORT_GAS=true hardhat test"
   },
@@ -17,6 +18,7 @@
     "express": "^4.19.2"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^0.15.1",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.3"
   }

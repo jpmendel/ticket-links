@@ -2,9 +2,9 @@
 pragma solidity ^0.8.24;
 
 contract Ticket {
-    address manager;
-    uint256 _maxAmount;
-    uint256 _idCounter;
+    address public manager;
+    uint256 private _maxAmount;
+    uint256 private _idCounter;
 
     struct TicketInfo {
         uint256 id;
@@ -13,10 +13,10 @@ contract Ticket {
         bool isForSale;
     }
 
-    mapping(uint256 => TicketInfo) _tickets;
-    mapping(uint256 => mapping(address => bool)) _isApproved;
-    mapping(uint256 => mapping(address => bool)) _buyers;
-    mapping(uint256 => address[]) _buyerAddresses;
+    mapping(uint256 => TicketInfo) private _tickets;
+    mapping(uint256 => mapping(address => bool)) private _isApproved;
+    mapping(uint256 => mapping(address => bool)) private _buyers;
+    mapping(uint256 => address[]) private _buyerAddresses;
 
     constructor(address _manager, uint256 _max) {
         manager = _manager;

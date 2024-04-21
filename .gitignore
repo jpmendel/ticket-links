@@ -2,13 +2,12 @@ node_modules
 .env
 
 build/
+ignition/deployments/
 
 typechain/
 typechain-types/
 
 coverage/
 coverage.json
-
-ignition/deployments/chain-31337
 
 .DS_Store
