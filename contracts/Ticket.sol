@@ -11,6 +11,7 @@ contract Ticket {
         address owner;
         uint256 price;
         bool isForSale;
+        bool requiresApproval;
     }
 
     mapping(uint256 => TicketInfo) private _tickets;
@@ -24,12 +25,12 @@ contract Ticket {
         _idCounter = 1;
     }
 
-    modifier requireManager() {
+    modifier requireIsManager() {
         require(msg.sender == manager, "Must be ticket creator");
         _;
     }
 
-    modifier requireOwner(uint256 _ticketId) {
+    modifier requireIsOwner(uint256 _ticketId) {
         require(
             msg.sender == _tickets[_ticketId].owner,
             "Must be ticket owner"
@@ -37,9 +38,10 @@ contract Ticket {
         _;
     }
 
-    modifier requireBuyer(uint256 _ticketId) {
+    modifier requireIsBuyer(uint256 _ticketId) {
         require(
-            _buyers[_ticketId][msg.sender],
+            !_tickets[_ticketId].requiresApproval ||
+                _buyers[_ticketId][msg.sender],
             "Must be a buyer of the ticket"
         );
         _;
@@ -51,12 +53,20 @@ contract Ticket {
     }
 
     modifier requireApproval(uint256 _ticketId) {
-        require(_isApproved[_ticketId][msg.sender], "Must be approved");
+        require(
+            !_tickets[_ticketId].requiresApproval ||
+                _isApproved[_ticketId][msg.sender],
+            "Must be approved"
+        );
         _;
     }
 
     modifier requireHasBuyer(uint256 _ticketId, address _recipient) {
-        require(_buyers[_ticketId][_recipient], "Must have a buyer");
+        require(
+            !_tickets[_ticketId].requiresApproval ||
+                _buyers[_ticketId][_recipient],
+            "Must have a buyer"
+        );
         _;
     }
 
@@ -68,13 +78,14 @@ contract Ticket {
         return _maxAmount;
     }
 
-    function create(uint256 _price) public requireManager returns (uint256) {
+    function create(uint256 _price) public requireIsManager returns (uint256) {
         require(totalAmount() < maxAmount(), "Reached ticket limit");
         uint256 _ticketId = _idCounter;
         TicketInfo storage _ticket = _tickets[_ticketId];
         _ticket.id = _ticketId;
         _ticket.owner = msg.sender;
         _ticket.price = _price;
+        _ticket.requiresApproval = false;
         _idCounter++;
         return _ticketId;
     }
@@ -129,11 +140,16 @@ contract Ticket {
         return _buyerAddresses[_ticketId];
     }
 
-    function list(uint256 _ticketId) public requireOwner(_ticketId) {
-        _tickets[_ticketId].isForSale = true;
+    function list(
+        uint256 _ticketId,
+        bool _requiresApproval
+    ) public requireIsOwner(_ticketId) {
+        TicketInfo storage _ticket = _tickets[_ticketId];
+        _ticket.isForSale = true;
+        _ticket.requiresApproval = _requiresApproval;
     }
 
-    function cancelSale(uint256 _ticketId) public requireOwner(_ticketId) {
+    function cancelSale(uint256 _ticketId) public requireIsOwner(_ticketId) {
         _clearSaleInfo(_ticketId);
     }
 
@@ -148,7 +164,7 @@ contract Ticket {
     function dismissBuyer(
         uint256 _ticketId,
         address _buyer
-    ) public requireOwner(_ticketId) {
+    ) public requireIsOwner(_ticketId) {
         _buyers[_ticketId][_buyer] = false;
         for (uint i = 0; i < _buyerAddresses[_ticketId].length; i++) {
             if (_buyerAddresses[_ticketId][i] == _buyer) {
@@ -160,13 +176,11 @@ contract Ticket {
     function approve(
         uint256 _ticketId,
         address _recipient
-    ) public requireOwner(_ticketId) requireHasBuyer(_ticketId, _recipient) {
+    ) public requireIsOwner(_ticketId) requireHasBuyer(_ticketId, _recipient) {
         _isApproved[_ticketId][_recipient] = true;
     }
 
-    function buy(
-        uint256 _ticketId
-    ) public payable requireBuyer(_ticketId) requireApproval(_ticketId) {
+    function buy(uint256 _ticketId) public payable requireApproval(_ticketId) {
         TicketInfo storage _ticket = _tickets[_ticketId];
         require(msg.value == _ticket.price, "Incorrect amount of money");
         address _owner = ownerOf(_ticketId);
@@ -175,7 +189,7 @@ contract Ticket {
         _clearSaleInfo(_ticketId);
     }
 
-    function increaseLimit(uint256 _max) public requireManager {
+    function increaseLimit(uint256 _max) public requireIsManager {
         _maxAmount = _max;
     }
 

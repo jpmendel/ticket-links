@@ -1,16 +1,15 @@
 const main = async () => {
-  const data = await browser.storage.local.get([
-    'account',
-    'privateKey',
-    'chainUrl',
-  ]);
-  if (data.account && data.privateKey && data.chainUrl) {
-    console.log('Loaded Wallet');
-    window.postMessage({ type: 'wallet', data }, '*');
-  } else {
-    console.log('Wallet Not Connected');
-    window.postMessage({ type: 'wallet', data: null }, '*');
+  const { currentAccount } = await browser.storage.local.get('currentAccount');
+  if (currentAccount) {
+    const { accounts } = await browser.storage.local.get('accounts');
+    const account = accounts[currentAccount];
+    if (account) {
+      console.log('Loaded Wallet');
+      window.postMessage({ type: 'wallet', data: account }, '*');
+    }
   }
+  console.log('Wallet Not Connected');
+  window.postMessage({ type: 'wallet', data: null }, '*');
 };
 
 window.addEventListener('DOMContentLoaded', () => main());

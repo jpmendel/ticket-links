@@ -22,7 +22,7 @@ describe('Ticket', () => {
 
     // List 3 of them for sale.
     for (let i = 0; i < 3; i++) {
-      await ticket.connect(manager).list(i + 1);
+      await ticket.connect(manager).list(i + 1, false);
     }
   });
 
@@ -70,7 +70,7 @@ describe('Ticket', () => {
       expect(total).to.be.equal(max);
 
       await expect(ticket.connect(manager).create(eth(2))).to.be.revertedWith(
-        'No tickets remaining',
+        'Reached ticket limit',
       );
     });
   });
@@ -80,18 +80,16 @@ describe('Ticket', () => {
       let isForSale = await ticket.isForSale(4);
       expect(isForSale).to.be.equal(false);
 
-      await ticket.connect(manager).list(4);
+      await ticket.connect(manager).list(4, false);
 
       isForSale = await ticket.isForSale(4);
       expect(isForSale).to.be.equal(true);
     });
 
-    it('buyer can buy an approved ticket', async () => {
+    it('buyer can buy a ticket that does not require approval', async () => {
       const managerStartBalance = await ethers.provider.getBalance(manager);
       const userStartBalance = await ethers.provider.getBalance(user);
 
-      await ticket.connect(user).requestPurchase(1);
-      await ticket.connect(manager).approve(1, user.address);
       await ticket.connect(user).buy(1, { value: eth(2) });
 
       const newOwner = await ticket.ownerOf(1);
@@ -103,18 +101,39 @@ describe('Ticket', () => {
       expect(userEndBalance).to.be.lessThan(userStartBalance);
     });
 
-    it('buyer cannot buy a ticket that is not approved', async () => {
-      await ticket.connect(user).requestPurchase(1);
+    it('buyer needs approval to buy tickets that require it', async () => {
+      const managerStartBalance = await ethers.provider.getBalance(manager);
+      const userStartBalance = await ethers.provider.getBalance(user);
+
+      await ticket.connect(manager).list(4, true);
 
       await expect(
-        ticket.connect(user).buy(1, { value: eth(2) }),
+        ticket.connect(user).buy(4, { value: eth(2) }),
+      ).to.be.revertedWith('Must be approved');
+
+      await ticket.connect(user).requestPurchase(4);
+      await ticket.connect(manager).approve(4, user.address);
+      await ticket.connect(user).buy(4, { value: eth(2) });
+
+      const newOwner = await ticket.ownerOf(4);
+      expect(newOwner).to.be.equal(user.address);
+
+      const managerEndBalance = await ethers.provider.getBalance(manager);
+      const userEndBalance = await ethers.provider.getBalance(user);
+      expect(managerEndBalance).to.be.greaterThan(managerStartBalance);
+      expect(userEndBalance).to.be.lessThan(userStartBalance);
+    });
+
+    it('buyer cannot buy a ticket that is not approved', async () => {
+      await ticket.connect(manager).list(4, true);
+      await ticket.connect(user).requestPurchase(4);
+
+      await expect(
+        ticket.connect(user).buy(4, { value: eth(2) }),
       ).to.be.revertedWith('Must be approved');
     });
 
     it('buyer cannot buy a ticket without the exact amount of money', async () => {
-      await ticket.connect(user).requestPurchase(1);
-      await ticket.connect(manager).approve(1, user.address);
-
       await expect(
         ticket.connect(user).buy(1, { value: eth(1) }),
       ).to.be.revertedWith('Incorrect amount of money');
@@ -124,20 +143,22 @@ describe('Ticket', () => {
     });
 
     it('buyer cannot request purchase more than once', async () => {
-      await ticket.connect(user).requestPurchase(1);
+      await ticket.connect(manager).list(4, true);
+      await ticket.connect(user).requestPurchase(4);
 
-      await expect(ticket.connect(user).requestPurchase(1)).to.be.revertedWith(
+      await expect(ticket.connect(user).requestPurchase(4)).to.be.revertedWith(
         'Already a buyer',
       );
     });
 
     it('owner can dismiss a buyer', async () => {
-      await ticket.connect(user).requestPurchase(1);
-      await ticket.connect(manager).dismissBuyer(1, user.address);
+      await ticket.connect(manager).list(4, true);
+      await ticket.connect(user).requestPurchase(4);
+      await ticket.connect(manager).dismissBuyer(4, user.address);
 
       await expect(
-        ticket.connect(user).buy(1, { value: eth(2) }),
-      ).to.be.revertedWith('Must be a buyer of the ticket');
+        ticket.connect(user).buy(4, { value: eth(2) }),
+      ).to.be.revertedWith('Must be approved');
     });
   });
 });

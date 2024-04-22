@@ -40,6 +40,11 @@
             "internalType": "bool",
             "name": "isForSale",
             "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "requiresApproval",
+            "type": "bool"
           }
         ],
         "internalType": "struct Ticket.TicketInfo[]",
@@ -188,6 +193,11 @@
         "internalType": "uint256",
         "name": "_ticketId",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "_requiresApproval",
+        "type": "bool"
       }
     ],
     "name": "list",
@@ -245,6 +255,11 @@
           {
             "internalType": "bool",
             "name": "isForSale",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "requiresApproval",
             "type": "bool"
           }
         ],

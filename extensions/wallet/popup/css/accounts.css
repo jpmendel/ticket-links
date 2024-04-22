@@ -1,0 +1,54 @@
+.accounts-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.accounts-list-row {
+  display: flex;
+}
+
+.accounts-item-outer {
+  padding: 8px;
+  border: 1px solid gray;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.accounts-item-inner {
+  display: flex;
+  gap: 8px;
+}
+
+.accounts-item-status-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.accounts-item-status {
+  background-color: #FFBF00;
+  width: 20px;
+  height: 20px;
+  border-radius: 99px;
+}
+
+.accounts-item-status.active {
+  background-color: #03C04A;
+}
+
+.accounts-item-name {
+  font-weight: bold;
+}
+
+.accounts-delete-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+}
+
+.accounts-delete-button {
+  cursor: pointer;
+}

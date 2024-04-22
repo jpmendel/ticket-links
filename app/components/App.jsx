@@ -4,7 +4,7 @@ import { BlockChainContext } from './Context';
 import { AccountView } from './account/AccountView';
 import { TicketListView } from './tickets/TicketListView';
 import { EmptyStateView } from './EmptyStateView';
-import { BlockChainService } from '../service/BlockChainService';
+import { BlockChainService } from '../services/BlockChainService';
 import './App.css';
 
 export const App = () => {

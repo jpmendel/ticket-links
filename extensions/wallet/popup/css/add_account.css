@@ -1,0 +1,13 @@
+.add-account-input-container {
+  margin-bottom: 12px;
+}
+
+.add-account-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.add-account-button-container {
+  display: flex;
+  gap: 12px;
+}
