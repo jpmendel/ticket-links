@@ -1,10 +1,13 @@
-import { Contract, Wallet, formatEther } from 'ethers';
+import { Contract, Wallet, formatEther, parseEther } from 'ethers';
 import ticketAbi from '../data/abi/Ticket.json';
-import addresses from '../data/addresses.json';
+import addresses from '../data/local/addresses.json';
 
 export class BlockChainService {
   constructor(provider, wallet) {
     this.wallet = new Wallet(wallet.privateKey, provider);
+    this.contracts = {
+      ticket: new Contract(addresses.ticket, ticketAbi, this.wallet.provider),
+    };
   }
 
   async getBalance() {
@@ -14,12 +17,9 @@ export class BlockChainService {
   }
 
   async getTicketsForSale() {
-    const ticketContract = new Contract(
-      addresses.ticket,
-      ticketAbi,
-      this.wallet.provider,
-    );
-    const forSale = await ticketContract.connect(this.wallet).allForSale();
+    const forSale = await this.contracts.ticket
+      .connect(this.wallet)
+      .allForSale();
     const tickets = [];
     for (const ticket of forSale) {
       tickets.push({
@@ -33,12 +33,9 @@ export class BlockChainService {
   }
 
   async getMyTickets() {
-    const ticketContract = new Contract(
-      addresses.ticket,
-      ticketAbi,
-      this.wallet.provider,
-    );
-    const myTickets = await ticketContract.connect(this.wallet).ownedByMe();
+    const myTickets = await this.contracts.ticket
+      .connect(this.wallet)
+      .ownedByMe();
     const tickets = [];
     for (const ticket of myTickets) {
       tickets.push({
@@ -49,5 +46,19 @@ export class BlockChainService {
       });
     }
     return tickets;
+  }
+
+  async purchaseTicket(ticketId, price) {
+    await this.contracts.ticket
+      .connect(this.wallet)
+      .buy(ticketId, { value: parseEther(price) });
+  }
+
+  isTicketMine(ticket) {
+    return ticket.owner === this.wallet.address;
+  }
+
+  isTicketSoldByManager(ticket) {
+    return ticket.owner === addresses.manager;
   }
 }

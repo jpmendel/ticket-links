@@ -1,0 +1,11 @@
+.sbm-ticket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sbm-ticket-group-outer {
+  padding: 12px;
+  border: 1px solid black;
+  border-radius: 8px;
+}

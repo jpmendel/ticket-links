@@ -11,7 +11,7 @@ contract Ticket {
         address owner;
         uint256 price;
         bool isForSale;
-        bool requiresApproval;
+        bool needsApproval;
     }
 
     mapping(uint256 => TicketInfo) private _tickets;
@@ -40,7 +40,7 @@ contract Ticket {
 
     modifier requireIsBuyer(uint256 _ticketId) {
         require(
-            !_tickets[_ticketId].requiresApproval ||
+            !_tickets[_ticketId].needsApproval ||
                 _buyers[_ticketId][msg.sender],
             "Must be a buyer of the ticket"
         );
@@ -54,7 +54,7 @@ contract Ticket {
 
     modifier requireApproval(uint256 _ticketId) {
         require(
-            !_tickets[_ticketId].requiresApproval ||
+            !_tickets[_ticketId].needsApproval ||
                 _isApproved[_ticketId][msg.sender],
             "Must be approved"
         );
@@ -63,7 +63,7 @@ contract Ticket {
 
     modifier requireHasBuyer(uint256 _ticketId, address _recipient) {
         require(
-            !_tickets[_ticketId].requiresApproval ||
+            !_tickets[_ticketId].needsApproval ||
                 _buyers[_ticketId][_recipient],
             "Must have a buyer"
         );
@@ -85,7 +85,7 @@ contract Ticket {
         _ticket.id = _ticketId;
         _ticket.owner = msg.sender;
         _ticket.price = _price;
-        _ticket.requiresApproval = false;
+        _ticket.needsApproval = false;
         _idCounter++;
         return _ticketId;
     }
@@ -142,11 +142,11 @@ contract Ticket {
 
     function list(
         uint256 _ticketId,
-        bool _requiresApproval
+        bool _needsApproval
     ) public requireIsOwner(_ticketId) {
         TicketInfo storage _ticket = _tickets[_ticketId];
         _ticket.isForSale = true;
-        _ticket.requiresApproval = _requiresApproval;
+        _ticket.needsApproval = _needsApproval;
     }
 
     function cancelSale(uint256 _ticketId) public requireIsOwner(_ticketId) {

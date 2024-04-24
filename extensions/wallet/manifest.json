@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Wallet",
   "version": "0.5.0",
   "description": "Represents a blockchain wallet in your browser.",
@@ -7,17 +7,16 @@
     "128": "icons/icon128.png"
   },
   "permissions": ["activeTab", "webRequest", "storage"],
-  "content_scripts": [
-    {
-      "matches": ["*://localhost/*"],
-      "js": ["scripts/wallet.js"],
-      "all_frames": true,
-      "run_at": "document_end"
-    }
-  ],
-  "browser_action": {
+  "action": {
     "default_icon": "icons/icon128.png",
     "default_title": "Wallet",
     "default_popup": "popup/index.html"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://localhost/*"],
+      "js": ["lib/storage.js", "scripts/wallet.js"],
+      "run_at": "document_start"
+    }
+  ]
 }

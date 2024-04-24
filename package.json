@@ -4,13 +4,13 @@
   "description": "A blockchain-based ticket sales platform.",
   "author": "",
   "license": "MIT",
-  "main": "site/main.js",
+  "private": true,
   "scripts": {
     "start:app": "vite",
     "start:chain": "hardhat node",
     "build": "vite build",
-    "compile": "hardhat compile",
-    "deploy": "hardhat run deploy/deploy.js --network localhost",
+    "compile": "hardhat compile && node scripts/postCompile.js",
+    "deploy": "hardhat run scripts/deploy.js --network localhost",
     "test": "hardhat test",
     "test:gas": "REPORT_GAS=true hardhat test"
   },

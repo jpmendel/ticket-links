@@ -43,7 +43,7 @@
           },
           {
             "internalType": "bool",
-            "name": "requiresApproval",
+            "name": "needsApproval",
             "type": "bool"
           }
         ],
@@ -196,7 +196,7 @@
       },
       {
         "internalType": "bool",
-        "name": "_requiresApproval",
+        "name": "_needsApproval",
         "type": "bool"
       }
     ],
@@ -259,7 +259,7 @@
           },
           {
             "internalType": "bool",
-            "name": "requiresApproval",
+            "name": "needsApproval",
             "type": "bool"
           }
         ],

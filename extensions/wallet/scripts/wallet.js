@@ -1,11 +1,14 @@
 const main = async () => {
-  const { currentAccount } = await browser.storage.local.get('currentAccount');
-  if (currentAccount) {
-    const { accounts } = await browser.storage.local.get('accounts');
+  const { currentAccount } = await browser.storage.local.get(
+    StorageKey.CURRENT_ACCOUNT,
+  );
+  if (currentAccount != null) {
+    const { accounts } = await browser.storage.local.get(StorageKey.ACCOUNTS);
     const account = accounts[currentAccount];
     if (account) {
       console.log('Loaded Wallet');
       window.postMessage({ type: 'wallet', data: account }, '*');
+      return;
     }
   }
   console.log('Wallet Not Connected');

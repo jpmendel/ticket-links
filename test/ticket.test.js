@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const { ethers } = require('hardhat');
 
-const eth = (amt) => ethers.parseUnits(amt.toString(), 'ether');
+const eth = (amt) => ethers.parseEther(amt.toString());
 
 describe('Ticket', () => {
   let manager;
