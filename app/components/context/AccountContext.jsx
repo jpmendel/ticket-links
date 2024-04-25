@@ -15,7 +15,7 @@ export const AccountContext = createContext({
 export const AccountProvider = ({ children }) => {
   const { service } = useContext(BlockChainContext);
 
-  const [balance, setBalance] = useState('');
+  const [balance, setBalance] = useState(null);
   const [isInitialLoaded, setInitialLoaded] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
@@ -36,13 +36,17 @@ export const AccountProvider = ({ children }) => {
   }, [service, isLoading]);
 
   useEffect(() => {
+    setInitialLoaded(false);
+  }, [service]);
+
+  useEffect(() => {
     if (!isInitialLoaded) {
       loadBalance();
     }
   }, [isInitialLoaded, loadBalance]);
 
   return (
-    <AccountContext.Provider value={{ balance, loadBalance }}>
+    <AccountContext.Provider value={{ balance, loadBalance, isLoading }}>
       {children}
     </AccountContext.Provider>
   );

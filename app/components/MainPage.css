@@ -1,0 +1,33 @@
+.main-container {
+  padding: 12px;
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 599px) {
+  .main-size-container {
+    width: 100%;
+  }
+}
+
+@media (min-width: 600px) {
+  .main-size-container {
+    width: 600px;
+  }
+}
+
+.main-account-container {
+  margin-bottom: 24px;
+}
+
+.main-sbm-container {
+  margin-bottom: 24px;
+}
+
+.main-sbo-container {
+
+}

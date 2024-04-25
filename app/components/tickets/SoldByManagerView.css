@@ -1,11 +1,40 @@
-.sbm-ticket-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.sbm-title-container {
+  margin-bottom: 6px;
+}
+
+@media (max-width: 599px) {
+  .sbm-ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+@media (min-width: 600px) {
+  .sbm-ticket-list {
+    display: grid;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .sbm-ticket-group-outer {
   padding: 12px;
   border: 1px solid black;
   border-radius: 8px;
+}
+
+.sbm-ticket-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.sbm-ticket-price-label {
+  margin-bottom: 6px;
+}
+
+.sbm-ticket-amount-left {
+  margin-bottom: 6px;
 }

@@ -90,7 +90,7 @@ describe('Ticket', () => {
       const managerStartBalance = await ethers.provider.getBalance(manager);
       const userStartBalance = await ethers.provider.getBalance(user);
 
-      await ticket.connect(user).buy(1, { value: eth(2) });
+      await ticket.connect(user).purchase(1, { value: eth(2) });
 
       const newOwner = await ticket.ownerOf(1);
       expect(newOwner).to.be.equal(user.address);
@@ -108,14 +108,31 @@ describe('Ticket', () => {
       await ticket.connect(manager).list(4, true);
 
       await expect(
-        ticket.connect(user).buy(4, { value: eth(2) }),
+        ticket.connect(user).purchase(4, { value: eth(2) }),
       ).to.be.revertedWith('Must be approved');
 
       await ticket.connect(user).requestPurchase(4);
       await ticket.connect(manager).approve(4, user.address);
-      await ticket.connect(user).buy(4, { value: eth(2) });
+      await ticket.connect(user).purchase(4, { value: eth(2) });
 
       const newOwner = await ticket.ownerOf(4);
+      expect(newOwner).to.be.equal(user.address);
+
+      const managerEndBalance = await ethers.provider.getBalance(manager);
+      const userEndBalance = await ethers.provider.getBalance(user);
+      expect(managerEndBalance).to.be.greaterThan(managerStartBalance);
+      expect(userEndBalance).to.be.lessThan(userStartBalance);
+    });
+
+    it('buyer can buy the first available ticket that does not require approval', async () => {
+      const managerStartBalance = await ethers.provider.getBalance(manager);
+      const userStartBalance = await ethers.provider.getBalance(user);
+
+      await ticket
+        .connect(user)
+        .purchaseFirstAvailable(manager.address, { value: eth(2) });
+
+      const newOwner = await ticket.ownerOf(1);
       expect(newOwner).to.be.equal(user.address);
 
       const managerEndBalance = await ethers.provider.getBalance(manager);
@@ -129,17 +146,25 @@ describe('Ticket', () => {
       await ticket.connect(user).requestPurchase(4);
 
       await expect(
-        ticket.connect(user).buy(4, { value: eth(2) }),
+        ticket.connect(user).purchase(4, { value: eth(2) }),
       ).to.be.revertedWith('Must be approved');
     });
 
     it('buyer cannot buy a ticket without the exact amount of money', async () => {
       await expect(
-        ticket.connect(user).buy(1, { value: eth(1) }),
+        ticket.connect(user).purchase(1, { value: eth(1) }),
       ).to.be.revertedWith('Incorrect amount of money');
       await expect(
-        ticket.connect(user).buy(1, { value: eth(3) }),
+        ticket.connect(user).purchase(1, { value: eth(3) }),
       ).to.be.revertedWith('Incorrect amount of money');
+    });
+
+    it('buyer cannot buy first available if there are none at that price', async () => {
+      await expect(
+        ticket
+          .connect(user)
+          .purchaseFirstAvailable(manager.address, { value: eth(1) }),
+      ).to.be.revertedWith('No tickets found at that price');
     });
 
     it('buyer cannot request purchase more than once', async () => {
@@ -157,7 +182,7 @@ describe('Ticket', () => {
       await ticket.connect(manager).dismissBuyer(4, user.address);
 
       await expect(
-        ticket.connect(user).buy(4, { value: eth(2) }),
+        ticket.connect(user).purchase(4, { value: eth(2) }),
       ).to.be.revertedWith('Must be approved');
     });
   });

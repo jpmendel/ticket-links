@@ -44,6 +44,10 @@ export const TicketProvider = ({ children }) => {
   }, [service, isLoading]);
 
   useEffect(() => {
+    setInitialLoaded(false);
+  }, [service]);
+
+  useEffect(() => {
     if (!isInitialLoaded) {
       loadTickets();
     }
@@ -54,8 +58,8 @@ export const TicketProvider = ({ children }) => {
       value={{
         ticketsForSale,
         myTickets,
-        isLoading,
         loadTickets,
+        isLoading,
       }}
     >
       {children}

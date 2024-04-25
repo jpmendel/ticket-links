@@ -1,22 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
+const CONTRACTS = ['Ticket'];
+
 const main = async () => {
   try {
-    const ticketInfoPath = path.join(
-      __dirname,
-      '../build/artifacts/contracts/Ticket.sol/Ticket.json',
-    );
-    const ticketAbiPath = path.join(__dirname, '../app/data/abi/Ticket.json');
-
-    const fileContent = fs.readFileSync(ticketInfoPath, {
-      encoding: 'utf-8',
-    });
-    const ticketInfo = JSON.parse(fileContent);
-    const ticketAbi = ticketInfo.abi;
-    fs.writeFileSync(ticketAbiPath, JSON.stringify(ticketAbi, null, 2));
-
-    console.log('Copied ABI files');
+    for (const contract of CONTRACTS) {
+      const infoPath = path.join(
+        __dirname,
+        `../build/artifacts/contracts/${contract}.sol/${contract}.json`,
+      );
+      const abiPath = path.join(__dirname, `../app/data/abi/${contract}.json`);
+      const content = fs.readFileSync(infoPath, { encoding: 'utf-8' });
+      const info = JSON.parse(content);
+      fs.writeFileSync(abiPath, JSON.stringify(info.abi, null, 2));
+      console.log(`Copied ${contract} ABI file`);
+    }
   } catch (error) {
     console.error('Post compile failed:', error);
     process.exit(1);

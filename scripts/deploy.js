@@ -27,22 +27,20 @@ const main = async () => {
 
     // Save the deployed address to a file.
     const address = await ticket.getAddress();
-    const addressesFilePath = path.join(
+    const addressesPath = path.join(
       __dirname,
       '../app/data/local/addresses.json',
     );
 
     let addresses = {};
     try {
-      const fileContent = fs.readFileSync(addressesFilePath, {
-        encoding: 'utf-8',
-      });
+      const fileContent = fs.readFileSync(addressesPath, { encoding: 'utf-8' });
       addresses = JSON.parse(fileContent);
     } catch {}
 
     addresses.ticket = address;
     addresses.manager = manager.address;
-    fs.writeFileSync(addressesFilePath, JSON.stringify(addresses, null, 2));
+    fs.writeFileSync(addressesPath, JSON.stringify(addresses, null, 2));
 
     console.log(`Deployed Ticket at: ${address}`);
   } catch (error) {

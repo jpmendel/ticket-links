@@ -1,3 +1,66 @@
-.account-container {
-  margin-bottom: 12px;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+button {
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.text-title {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.text-subtitle {
+  font-size: 20px;
+}
+
+.text-body {
+  font-size: 16px;
+}
+
+.text-caption {
+  font-size: 14px;
+}
+
+.button-primary {
+  background-color: springgreen;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
+.button-secondary {
+  background-color: white;
+  color: black;
+  padding: 12px 16px;
+  border: solid gray 1px;
+  border-radius: 8px;
+}
+
+.button-destructive {
+  background-color: red;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
 }

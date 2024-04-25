@@ -4,22 +4,32 @@ import addresses from '../data/local/addresses.json';
 
 export class BlockChainService {
   constructor(provider, wallet) {
-    this.wallet = new Wallet(wallet.privateKey, provider);
+    this.provider = provider;
+    if (provider && wallet) {
+      this.wallet = new Wallet(wallet.privateKey, provider);
+    } else {
+      this.wallet = null;
+    }
     this.contracts = {
-      ticket: new Contract(addresses.ticket, ticketAbi, this.wallet.provider),
+      ticket: new Contract(addresses.ticket, ticketAbi, this.provider),
     };
   }
 
+  isConnected() {
+    return this.wallet != null;
+  }
+
   async getBalance() {
+    if (!this.isConnected()) {
+      return null;
+    }
     const account = this.wallet.address;
-    const balance = await this.wallet.provider.getBalance(account);
+    const balance = await this.provider.getBalance(account);
     return formatEther(balance);
   }
 
   async getTicketsForSale() {
-    const forSale = await this.contracts.ticket
-      .connect(this.wallet)
-      .allForSale();
+    const forSale = await this.contracts.ticket.allForSale();
     const tickets = [];
     for (const ticket of forSale) {
       tickets.push({
@@ -33,6 +43,9 @@ export class BlockChainService {
   }
 
   async getMyTickets() {
+    if (!this.isConnected()) {
+      return [];
+    }
     const myTickets = await this.contracts.ticket
       .connect(this.wallet)
       .ownedByMe();
@@ -49,9 +62,21 @@ export class BlockChainService {
   }
 
   async purchaseTicket(ticketId, price) {
+    if (!this.isConnected()) {
+      throw new Error('No wallet connected');
+    }
     await this.contracts.ticket
       .connect(this.wallet)
-      .buy(ticketId, { value: parseEther(price) });
+      .purchase(ticketId, { value: parseEther(price) });
+  }
+
+  async purchaseFirstAvailableTicket(seller, price) {
+    if (!this.isConnected()) {
+      throw new Error('No wallet connected');
+    }
+    await this.contracts.ticket
+      .connect(this.wallet)
+      .purchaseFirstAvailable(seller, { value: parseEther(price) });
   }
 
   isTicketMine(ticket) {

@@ -25,6 +25,12 @@ contract Ticket {
         _idCounter = 1;
     }
 
+    event TicketPurchased(
+        uint256 ticketId,
+        address sellerAddress,
+        address buyerAddress
+    );
+
     modifier requireIsManager() {
         require(msg.sender == manager, "Must be ticket creator");
         _;
@@ -49,6 +55,14 @@ contract Ticket {
 
     modifier requireForSale(uint256 _ticketId) {
         require(_tickets[_ticketId].isForSale, "Must be for sale");
+        _;
+    }
+
+    modifier requireExactChange(uint256 _ticketId) {
+        require(
+            msg.value == _tickets[_ticketId].price,
+            "Incorrect amount of money"
+        );
         _;
     }
 
@@ -180,17 +194,39 @@ contract Ticket {
         _isApproved[_ticketId][_recipient] = true;
     }
 
-    function buy(uint256 _ticketId) public payable requireApproval(_ticketId) {
-        TicketInfo storage _ticket = _tickets[_ticketId];
-        require(msg.value == _ticket.price, "Incorrect amount of money");
+    function purchase(
+        uint256 _ticketId
+    ) public payable requireApproval(_ticketId) requireExactChange(_ticketId) {
         address _owner = ownerOf(_ticketId);
         payable(_owner).transfer(msg.value);
-        _ticket.owner = msg.sender;
+        _tickets[_ticketId].owner = msg.sender;
         _clearSaleInfo(_ticketId);
+        emit TicketPurchased(_ticketId, _owner, msg.sender);
+    }
+
+    function purchaseFirstAvailable(address _seller) public payable {
+        for (uint id = 1; id <= totalAmount(); id++) {
+            if (
+                ownerOf(id) == _seller &&
+                isForSale(id) &&
+                priceOf(id) == msg.value &&
+                !_ticketNeedsApproval(id)
+            ) {
+                purchase(id);
+                return;
+            }
+        }
+        revert("No tickets found at that price");
     }
 
     function increaseLimit(uint256 _max) public requireIsManager {
         _maxAmount = _max;
+    }
+
+    function _ticketNeedsApproval(
+        uint256 _ticketId
+    ) private view returns (bool) {
+        return _tickets[_ticketId].needsApproval;
     }
 
     function _clearSaleInfo(uint256 _ticketId) private {
