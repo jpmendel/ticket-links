@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import { BlockChainContext } from '../context/BlockChainContext';
-import { AccountContext } from '../context/AccountContext';
-import { TicketContext } from '../context/TicketContext';
+import { BlockChainContext } from '../contexts/BlockChainContext';
+import { AccountContext } from '../contexts/AccountContext';
+import { TicketContext } from '../contexts/TicketContext';
 import addresses from '../../data/local/addresses.json';
 import './SoldByManagerView.css';
 
@@ -50,26 +50,32 @@ export const SoldByManagerView = () => {
       <div className="sbm-title-container">
         <h1 className="text-title">Sold by Manager</h1>
       </div>
-      <div className="sbm-ticket-list">
-        {ticketGroups.map((group, index) => (
-          <div key={index} className="sbm-ticket-group-outer">
-            <div className="ticket-inner">
-              <h2 className="text-subtitle sbm-ticket-title">Ticket</h2>
-              <div className="sbm-ticket-price-label">{`${group.price} ETH`}</div>
-              <div className="sbm-ticket-amount-left">
-                {`${group.count} left at this price`}
+      {ticketGroups.length > 0 ? (
+        <div className="sbm-ticket-list">
+          {ticketGroups.map((group, index) => (
+            <div key={index} className="sbm-ticket-group-outer">
+              <div className="sbm-ticket-group-inner">
+                <h2 className="text-subtitle sbm-ticket-title">Ticket</h2>
+                <div className="text-body sbm-ticket-price-label">
+                  {`${group.price} ETH`}
+                </div>
+                <div className="text-body sbm-ticket-amount-left">
+                  {`${group.count} left at this price`}
+                </div>
+                <button
+                  className="button-primary text-body"
+                  type="button"
+                  onClick={() => purchaseTicket(group.price)}
+                >
+                  Purchase
+                </button>
               </div>
-              <button
-                className="button-primary text-body"
-                type="button"
-                onClick={() => purchaseTicket(group.price)}
-              >
-                Purchase
-              </button>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div>No Tickets</div>
+      )}
     </div>
   );
 };

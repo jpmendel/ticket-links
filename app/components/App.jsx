@@ -1,7 +1,7 @@
-import { BlockChainProvider } from './context/BlockChainContext';
-import { AccountProvider } from './context/AccountContext';
-import { TicketProvider } from './context/TicketContext';
-import { MainPage } from './MainPage';
+import { BlockChainProvider } from './contexts/BlockChainContext';
+import { AccountProvider } from './contexts/AccountContext';
+import { TicketProvider } from './contexts/TicketContext';
+import { MainPage } from './pages/MainPage';
 import './App.css';
 
 export const App = () => {

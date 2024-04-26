@@ -44,6 +44,8 @@ export class BlockChainService {
 
   async getMyTickets() {
     if (!this.isConnected()) {
+      console.log(this.wallet);
+      console.log('nope');
       return [];
     }
     const myTickets = await this.contracts.ticket
@@ -77,6 +79,13 @@ export class BlockChainService {
     await this.contracts.ticket
       .connect(this.wallet)
       .purchaseFirstAvailable(seller, { value: parseEther(price) });
+  }
+
+  async listTicket(ticketId) {
+    if (!this.isConnected()) {
+      throw new Error('No wallet connected');
+    }
+    await this.contracts.ticket.connect(this.wallet).list(ticketId, true);
   }
 
   isTicketMine(ticket) {

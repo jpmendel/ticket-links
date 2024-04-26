@@ -9,19 +9,19 @@ const main = async () => {
     const [manager] = await ethers.getSigners();
 
     const Ticket = await ethers.getContractFactory('Ticket');
-    const ticket = await Ticket.deploy(manager, 10);
+    const ticket = await Ticket.deploy(manager, 30);
     await ticket.waitForDeployment();
 
     // Create 10 tickets.
     for (let i = 0; i < 3; i++) {
       await ticket.connect(manager).create(eth(2));
     }
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 7; i++) {
       await ticket.connect(manager).create(eth(5));
     }
 
-    // List 5 of them for sale.
-    for (let i = 0; i < 5; i++) {
+    // List all of them for sale.
+    for (let i = 0; i < 10; i++) {
       await ticket.connect(manager).list(i + 1, false);
     }
 

@@ -1,0 +1,33 @@
+.sbo-title-container {
+  margin-bottom: 6px;
+}
+
+.sbo-ticket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sbo-ticket-outer {
+  padding: 12px;
+  border: 1px solid black;
+  border-radius: 8px;
+}
+
+.sbo-ticket-inner {
+  display: flex;
+  align-items: center;
+}
+
+.sbo-ticket-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.sbo-ticket-info-container {
+  flex: 1 0 0;
+}
+
+.sbo-ticket-price-label {
+  margin-bottom: 6px;
+}

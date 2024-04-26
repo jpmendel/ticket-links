@@ -1,0 +1,67 @@
+.account-title-container {
+  margin-bottom: 6px;
+}
+
+.account-body-container {
+  padding: 12px;
+  border: 1px solid black;
+  border-radius: 8px;
+}
+
+.account-balance-container {
+  margin-bottom: 12px;
+}
+
+@media (max-width: 599px) {
+  .account-ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (min-width: 600px) {
+  .account-ticket-list {
+    display: grid;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.account-ticket-outer {
+  background-color: lightgray;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.account-ticket-inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.account-ticket-title-container {
+  flex: 1 0 0;
+}
+
+.account-ticket-title {
+  font-weight: bold;
+}
+
+.account-sell-button {
+  padding: 6px 16px !important;
+}
+
+.account-no-tickets-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-no-tickets-text {
+  font-weight: bold;
+  text-align: center;
+  padding: 20px 30px;
+}

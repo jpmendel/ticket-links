@@ -26,7 +26,8 @@ export const AccountProvider = ({ children }) => {
     setLoading(true);
     try {
       const balance = await service.getBalance();
-      setBalance(balance);
+      const numericBalance = parseFloat(balance).toFixed(2);
+      setBalance(numericBalance);
     } catch (error) {
       console.error('Failed to get balance:', error);
     } finally {
@@ -37,6 +38,7 @@ export const AccountProvider = ({ children }) => {
 
   useEffect(() => {
     setInitialLoaded(false);
+    setLoading(false);
   }, [service]);
 
   useEffect(() => {

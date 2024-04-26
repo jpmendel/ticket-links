@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { BlockChainContext } from './context/BlockChainContext';
-import { AccountView } from './account/AccountView';
-import { SoldByManagerView } from './tickets/SoldByManagerView';
-import { SoldByOthersView } from './tickets/SoldByOthersView';
+import { BlockChainContext } from '../contexts/BlockChainContext';
+import { AccountView } from '../views/AccountView';
+import { SoldByManagerView } from '../views/SoldByManagerView';
+import { SoldByOthersView } from '../views/SoldByOthersView';
 import './MainPage.css';
 
 export const MainPage = () => {

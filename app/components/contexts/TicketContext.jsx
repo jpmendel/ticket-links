@@ -45,6 +45,7 @@ export const TicketProvider = ({ children }) => {
 
   useEffect(() => {
     setInitialLoaded(false);
+    setLoading(false);
   }, [service]);
 
   useEffect(() => {
