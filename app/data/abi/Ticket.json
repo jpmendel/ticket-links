@@ -109,9 +109,21 @@
     "name": "buyersOf",
     "outputs": [
       {
-        "internalType": "address[]",
+        "components": [
+          {
+            "internalType": "address",
+            "name": "addr",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isApproved",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct Ticket.BuyerInfo[]",
         "name": "",
-        "type": "address[]"
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
@@ -178,6 +190,25 @@
     "name": "increaseLimit",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_ticketId",
+        "type": "uint256"
+      }
+    ],
+    "name": "isApproved",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -358,6 +389,46 @@
     "name": "requestPurchase",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "requestedByMe",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isForSale",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "needsApproval",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct Ticket.TicketInfo[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

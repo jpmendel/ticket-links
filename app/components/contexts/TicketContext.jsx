@@ -20,6 +20,7 @@ export const TicketProvider = ({ children }) => {
 
   const [ticketsForSale, setTicketsForSale] = useState([]);
   const [myTickets, setMyTickets] = useState([]);
+  const [requestedTickets, setRequestedTickets] = useState([]);
   const [isInitialLoaded, setInitialLoaded] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
@@ -31,8 +32,10 @@ export const TicketProvider = ({ children }) => {
     try {
       const ticketsForSale = await service.getTicketsForSale();
       const myTickets = await service.getMyTickets();
+      const requestedTickets = await service.getRequestedByMe();
       setTicketsForSale(ticketsForSale);
       setMyTickets(myTickets);
+      setRequestedTickets(requestedTickets);
     } catch (error) {
       console.error('Failed to get tickets:', error);
       setTicketsForSale([]);
@@ -59,6 +62,7 @@ export const TicketProvider = ({ children }) => {
       value={{
         ticketsForSale,
         myTickets,
+        requestedTickets,
         loadTickets,
         isLoading,
       }}

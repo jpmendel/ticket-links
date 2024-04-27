@@ -9,10 +9,22 @@ export const SoldByOthersView = () => {
   const { loadBalance } = useContext(AccountContext);
   const { ticketsForSale, loadTickets } = useContext(TicketContext);
 
-  const purchaseTicket = useCallback(
-    async (id, price) => {
+  const requestTicket = useCallback(
+    async (ticketId) => {
       try {
-        await service.purchaseTicket(id, price);
+        await service.requestTicket(ticketId);
+        await loadTickets();
+      } catch (error) {
+        console.error('Failed to request ticket:', error);
+      }
+    },
+    [service, loadTickets],
+  );
+
+  const purchaseTicket = useCallback(
+    async (ticketId, price) => {
+      try {
+        await service.purchaseTicket(ticketId, price);
         await loadBalance();
         await loadTickets();
       } catch (error) {
@@ -40,20 +52,33 @@ export const SoldByOthersView = () => {
                   <h2 className="text-subtitle sbo-ticket-title">
                     {`Ticket ${ticket.id}`}
                   </h2>
-                  <div className="text-body sbo-ticket-price-label">
+                  <p className="text-body sbo-ticket-price-label">
                     {`${ticket.price} ETH`}
-                  </div>
-                  <div className="text-caption sbo-ticket-seller">
-                    {`Sold by ${ticket.owner}`}
-                  </div>
+                  </p>
+                  <p className="text-caption sbo-ticket-seller">
+                    {`Sold by ${
+                      service.isTicketMine(ticket) ? 'me' : ticket.owner
+                    }`}
+                  </p>
                 </div>
                 <div>
                   <button
-                    className="button-primary text-body"
+                    className={`${
+                      service.isConnected()
+                        ? 'button-primary'
+                        : 'button-disabled'
+                    } text-body`}
                     type="button"
-                    onClick={() => purchaseTicket(ticket.id, ticket.price)}
+                    disabled={!service.isConnected()}
+                    onClick={async () => {
+                      if (ticket.needsApproval) {
+                        await requestTicket(ticket.id);
+                      } else {
+                        await purchaseTicket(ticket.id, ticket.price);
+                      }
+                    }}
                   >
-                    Request
+                    {ticket.needsApproval ? 'Request' : 'Purchase'}
                   </button>
                 </div>
               </div>
@@ -61,7 +86,9 @@ export const SoldByOthersView = () => {
           ))}
         </div>
       ) : (
-        <div>No Tickets</div>
+        <div className="sbo-no-tickets-container">
+          <p className="text-subtitle sbo-no-tickets-text">No Tickets</p>
+        </div>
       )}
     </div>
   );

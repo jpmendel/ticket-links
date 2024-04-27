@@ -19,6 +19,17 @@ export class BlockChainService {
     return this.wallet != null;
   }
 
+  isTicketMine(ticket) {
+    if (!this.isConnected()) {
+      return false;
+    }
+    return ticket.owner === this.wallet.address;
+  }
+
+  isTicketSoldByManager(ticket) {
+    return ticket.owner === addresses.manager;
+  }
+
   async getBalance() {
     if (!this.isConnected()) {
       return null;
@@ -37,6 +48,7 @@ export class BlockChainService {
         owner: ticket[1],
         price: formatEther(ticket[2]),
         isForSale: ticket[3],
+        needsApproval: ticket[4],
       });
     }
     return tickets;
@@ -44,8 +56,6 @@ export class BlockChainService {
 
   async getMyTickets() {
     if (!this.isConnected()) {
-      console.log(this.wallet);
-      console.log('nope');
       return [];
     }
     const myTickets = await this.contracts.ticket
@@ -58,6 +68,32 @@ export class BlockChainService {
         owner: ticket[1],
         price: formatEther(ticket[2]),
         isForSale: ticket[3],
+        needsApproval: ticket[4],
+      });
+    }
+    return tickets;
+  }
+
+  async getRequestedByMe() {
+    if (!this.isConnected()) {
+      return [];
+    }
+    const requested = await this.contracts.ticket
+      .connect(this.wallet)
+      .requestedByMe();
+    const tickets = [];
+    for (const ticket of requested) {
+      const ticketId = Number(ticket[0]);
+      const isApproved = await this.contracts.ticket
+        .connect(this.wallet)
+        .isApproved(ticketId);
+      tickets.push({
+        id: ticketId,
+        owner: ticket[1],
+        price: formatEther(ticket[2]),
+        isForSale: ticket[3],
+        needsApproval: ticket[4],
+        isApproved,
       });
     }
     return tickets;
@@ -88,11 +124,27 @@ export class BlockChainService {
     await this.contracts.ticket.connect(this.wallet).list(ticketId, true);
   }
 
-  isTicketMine(ticket) {
-    return ticket.owner === this.wallet.address;
+  async requestTicket(ticketId) {
+    if (!this.isConnected()) {
+      throw new Error('No wallet connected');
+    }
+    await this.contracts.ticket.connect(this.wallet).requestPurchase(ticketId);
   }
 
-  isTicketSoldByManager(ticket) {
-    return ticket.owner === addresses.manager;
+  async buyersOfTicket(ticketId) {
+    if (!this.isConnected()) {
+      throw new Error('No wallet connected');
+    }
+    const buyers = await this.contracts.ticket
+      .connect(this.wallet)
+      .buyersOf(ticketId);
+    return buyers.map((buyer) => ({ address: buyer[0], isApproved: buyer[1] }));
+  }
+
+  async approveBuyer(ticketId, buyer) {
+    if (!this.isConnected()) {
+      throw new Error('No wallet connected');
+    }
+    await this.contracts.ticket.connect(this.wallet).approve(ticketId, buyer);
   }
 }

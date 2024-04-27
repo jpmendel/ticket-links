@@ -38,3 +38,15 @@
 .sbm-ticket-amount-left {
   margin-bottom: 6px;
 }
+
+.sbm-no-tickets-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sbm-no-tickets-text {
+  font-weight: bold;
+  text-align: center;
+  padding: 20px 30px;
+}

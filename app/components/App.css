@@ -64,3 +64,10 @@ button {
   padding: 12px 16px;
   border-radius: 8px;
 }
+
+.button-disabled {
+  background-color: gray;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+}

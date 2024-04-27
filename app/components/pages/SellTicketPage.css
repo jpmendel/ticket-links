@@ -1,0 +1,57 @@
+.sell-container {
+  padding: 12px;
+}
+
+.sell-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 599px) {
+  .sell-size-container {
+    width: 100%;
+  }
+}
+
+@media (min-width: 600px) {
+  .sell-size-container {
+    width: 600px;
+  }
+}
+
+.sell-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.sell-title-container {
+  flex: 1 0 0;
+}
+
+.sell-buyer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sell-buyer-outer {
+  padding: 12px;
+  border: 1px solid black;
+  border-radius: 8px;
+}
+
+.sell-buyer-inner {
+  display: flex;
+  align-items: center;
+}
+
+.sell-buyer-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.sell-buyer-address {
+  flex: 1 0 0;
+}

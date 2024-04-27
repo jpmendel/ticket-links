@@ -31,3 +31,15 @@
 .sbo-ticket-price-label {
   margin-bottom: 6px;
 }
+
+.sbo-no-tickets-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sbo-no-tickets-text {
+  font-weight: bold;
+  text-align: center;
+  padding: 20px 30px;
+}

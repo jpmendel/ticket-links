@@ -56,15 +56,18 @@ export const SoldByManagerView = () => {
             <div key={index} className="sbm-ticket-group-outer">
               <div className="sbm-ticket-group-inner">
                 <h2 className="text-subtitle sbm-ticket-title">Ticket</h2>
-                <div className="text-body sbm-ticket-price-label">
+                <p className="text-body sbm-ticket-price-label">
                   {`${group.price} ETH`}
-                </div>
-                <div className="text-body sbm-ticket-amount-left">
+                </p>
+                <p className="text-body sbm-ticket-amount-left">
                   {`${group.count} left at this price`}
-                </div>
+                </p>
                 <button
-                  className="button-primary text-body"
+                  className={`${
+                    service.isConnected() ? 'button-primary' : 'button-disabled'
+                  } text-body`}
                   type="button"
+                  disabled={!service.isConnected()}
                   onClick={() => purchaseTicket(group.price)}
                 >
                   Purchase
@@ -74,7 +77,9 @@ export const SoldByManagerView = () => {
           ))}
         </div>
       ) : (
-        <div>No Tickets</div>
+        <div className="sbm-no-tickets-container">
+          <p className="text-subtitle sbm-no-tickets-text">No Tickets</p>
+        </div>
       )}
     </div>
   );

@@ -14,9 +14,13 @@ contract Ticket {
         bool needsApproval;
     }
 
+    struct BuyerInfo {
+        address addr;
+        bool isApproved;
+    }
+
     mapping(uint256 => TicketInfo) private _tickets;
-    mapping(uint256 => mapping(address => bool)) private _isApproved;
-    mapping(uint256 => mapping(address => bool)) private _buyers;
+    mapping(uint256 => mapping(address => BuyerInfo)) private _buyers;
     mapping(uint256 => address[]) private _buyerAddresses;
 
     constructor(address _manager, uint256 _max) {
@@ -47,7 +51,7 @@ contract Ticket {
     modifier requireIsBuyer(uint256 _ticketId) {
         require(
             !_tickets[_ticketId].needsApproval ||
-                _buyers[_ticketId][msg.sender],
+                _buyers[_ticketId][msg.sender].addr == msg.sender,
             "Must be a buyer of the ticket"
         );
         _;
@@ -69,7 +73,7 @@ contract Ticket {
     modifier requireApproval(uint256 _ticketId) {
         require(
             !_tickets[_ticketId].needsApproval ||
-                _isApproved[_ticketId][msg.sender],
+                _buyers[_ticketId][msg.sender].isApproved,
             "Must be approved"
         );
         _;
@@ -78,7 +82,7 @@ contract Ticket {
     modifier requireHasBuyer(uint256 _ticketId, address _recipient) {
         require(
             !_tickets[_ticketId].needsApproval ||
-                _buyers[_ticketId][_recipient],
+                _buyers[_ticketId][_recipient].addr == _recipient,
             "Must have a buyer"
         );
         _;
@@ -150,8 +154,29 @@ contract Ticket {
 
     function buyersOf(
         uint256 _ticketId
-    ) public view returns (address[] memory) {
-        return _buyerAddresses[_ticketId];
+    ) public view returns (BuyerInfo[] memory) {
+        uint256 _count = _buyerAddresses[_ticketId].length;
+        BuyerInfo[] memory _buyerList = new BuyerInfo[](_count);
+        for (uint i = 0; i < _count; i++) {
+            _buyerList[i] = _buyers[_ticketId][_buyerAddresses[_ticketId][i]];
+        }
+        return _buyerList;
+    }
+
+    function requestedByMe() public view returns (TicketInfo[] memory) {
+        uint256[] memory _ticketIds = new uint256[](totalAmount());
+        uint256 _count;
+        for (uint id = 1; id <= totalAmount(); id++) {
+            if (_buyers[id][msg.sender].addr == msg.sender) {
+                _ticketIds[_count] = id;
+                _count++;
+            }
+        }
+        TicketInfo[] memory _requested = new TicketInfo[](_count);
+        for (uint i = 0; i < _count; i++) {
+            _requested[i] = _tickets[_ticketIds[i]];
+        }
+        return _requested;
     }
 
     function list(
@@ -170,8 +195,13 @@ contract Ticket {
     function requestPurchase(
         uint256 _ticketId
     ) public requireForSale(_ticketId) {
-        require(!_buyers[_ticketId][msg.sender], "Already a buyer");
-        _buyers[_ticketId][msg.sender] = true;
+        require(
+            _buyers[_ticketId][msg.sender].addr != msg.sender,
+            "Already a buyer"
+        );
+        BuyerInfo storage _buyer = _buyers[_ticketId][msg.sender];
+        _buyer.addr = msg.sender;
+        _buyer.isApproved = false;
         _buyerAddresses[_ticketId].push(msg.sender);
     }
 
@@ -179,7 +209,7 @@ contract Ticket {
         uint256 _ticketId,
         address _buyer
     ) public requireIsOwner(_ticketId) {
-        _buyers[_ticketId][_buyer] = false;
+        delete _buyers[_ticketId][_buyer];
         for (uint i = 0; i < _buyerAddresses[_ticketId].length; i++) {
             if (_buyerAddresses[_ticketId][i] == _buyer) {
                 _buyerAddresses[_ticketId][i] = address(0);
@@ -191,7 +221,13 @@ contract Ticket {
         uint256 _ticketId,
         address _recipient
     ) public requireIsOwner(_ticketId) requireHasBuyer(_ticketId, _recipient) {
-        _isApproved[_ticketId][_recipient] = true;
+        _buyers[_ticketId][_recipient].isApproved = true;
+    }
+
+    function isApproved(
+        uint256 _ticketId
+    ) public view requireIsBuyer(_ticketId) returns (bool) {
+        return _buyers[_ticketId][msg.sender].isApproved;
     }
 
     function purchase(
@@ -232,8 +268,7 @@ contract Ticket {
     function _clearSaleInfo(uint256 _ticketId) private {
         TicketInfo storage _ticket = _tickets[_ticketId];
         for (uint i = 0; i < _buyerAddresses[_ticketId].length; i++) {
-            _buyers[_ticketId][_buyerAddresses[_ticketId][i]] = false;
-            _isApproved[_ticketId][_buyerAddresses[_ticketId][i]] = false;
+            delete _buyers[_ticketId][_buyerAddresses[_ticketId][i]];
         }
         delete _buyerAddresses[_ticketId];
         _ticket.isForSale = false;
