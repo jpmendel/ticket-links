@@ -30,6 +30,17 @@
   flex: 1 0 0;
 }
 
+.sell-close-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sell-close-button {
+  margin-right: 12px;
+  cursor: pointer;
+}
+
 .sell-buyer-list {
   display: flex;
   flex-direction: column;
@@ -45,13 +56,13 @@
 .sell-buyer-inner {
   display: flex;
   align-items: center;
-}
-
-.sell-buyer-title {
-  font-weight: bold;
-  margin-bottom: 6px;
+  gap: 12px;
 }
 
 .sell-buyer-address {
   flex: 1 0 0;
+  min-width: 0;
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
 }

@@ -7,10 +7,8 @@ class AccountsView extends HTMLElement {
     this.render();
   }
 
-  async connectAccount(accountIndex) {
-    await browser.storage.local.set({
-      [StorageKey.CURRENT_ACCOUNT]: accountIndex,
-    });
+  async connectAccount(index) {
+    await browser.storage.local.set({ [StorageKey.CURRENT_ACCOUNT]: index });
     this.render();
   }
 
@@ -50,7 +48,7 @@ class AccountsView extends HTMLElement {
             if (isCurrent) {
               await this.disconnectAccount();
             } else {
-              await this.connectAccount(index);
+              await this.connectAccount(index, account);
             }
           };
 

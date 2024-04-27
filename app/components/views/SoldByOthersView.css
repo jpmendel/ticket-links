@@ -17,6 +17,7 @@
 .sbo-ticket-inner {
   display: flex;
   align-items: center;
+  gap: 6px;
 }
 
 .sbo-ticket-title {
@@ -26,20 +27,19 @@
 
 .sbo-ticket-info-container {
   flex: 1 0 0;
+  min-width: 0;
 }
 
 .sbo-ticket-price-label {
   margin-bottom: 6px;
 }
 
-.sbo-no-tickets-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.sbo-ticket-seller {
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
 }
 
-.sbo-no-tickets-text {
-  font-weight: bold;
-  text-align: center;
-  padding: 20px 30px;
+.sbo-ticket-button-container {
+  flex: 0 0 1;
 }

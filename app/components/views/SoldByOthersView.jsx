@@ -61,15 +61,17 @@ export const SoldByOthersView = () => {
                     }`}
                   </p>
                 </div>
-                <div>
+                <div className="sbo-ticket-button-container">
                   <button
                     className={`${
-                      service.isConnected()
-                        ? 'button-primary'
-                        : 'button-disabled'
+                      !service.isConnected() || service.isTicketMine(ticket)
+                        ? 'button-disabled'
+                        : 'button-primary'
                     } text-body`}
                     type="button"
-                    disabled={!service.isConnected()}
+                    disabled={
+                      !service.isConnected() || service.isTicketMine(ticket)
+                    }
                     onClick={async () => {
                       if (ticket.needsApproval) {
                         await requestTicket(ticket.id);
@@ -86,8 +88,8 @@ export const SoldByOthersView = () => {
           ))}
         </div>
       ) : (
-        <div className="sbo-no-tickets-container">
-          <p className="text-subtitle sbo-no-tickets-text">No Tickets</p>
+        <div className="empty-state-container">
+          <p className="text-subtitle empty-state-text">No Tickets</p>
         </div>
       )}
     </div>

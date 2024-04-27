@@ -88,9 +88,7 @@ export const AccountView = () => {
               </div>
             ) : (
               <div className="account-no-tickets-container">
-                <p className="text-subtitle account-no-tickets-text">
-                  No Tickets
-                </p>
+                <p className="text-subtitle empty-state-text">No Tickets</p>
               </div>
             )}
           </>

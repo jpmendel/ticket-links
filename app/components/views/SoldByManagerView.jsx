@@ -77,8 +77,8 @@ export const SoldByManagerView = () => {
           ))}
         </div>
       ) : (
-        <div className="sbm-no-tickets-container">
-          <p className="text-subtitle sbm-no-tickets-text">No Tickets</p>
+        <div className="empty-state-container">
+          <p className="text-subtitle empty-state-text">No Tickets</p>
         </div>
       )}
     </div>
