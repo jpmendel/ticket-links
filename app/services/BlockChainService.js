@@ -1,4 +1,4 @@
-import { Contract, Wallet, formatEther, parseEther } from 'ethers';
+import { Contract, Wallet, formatEther, parseEther, ZeroAddress } from 'ethers';
 import ticketAbi from '../data/abi/Ticket.json';
 import addresses from '../data/local/addresses.json';
 
@@ -124,6 +124,13 @@ export class BlockChainService {
     await this.contracts.ticket.connect(this.wallet).list(ticketId, true);
   }
 
+  async cancelTicketSale(ticketId) {
+    if (!this.isConnected()) {
+      throw new Error('No wallet connected');
+    }
+    await this.contracts.ticket.connect(this.wallet).cancelSale(ticketId);
+  }
+
   async requestTicket(ticketId) {
     if (!this.isConnected()) {
       throw new Error('No wallet connected');
@@ -138,7 +145,9 @@ export class BlockChainService {
     const buyers = await this.contracts.ticket
       .connect(this.wallet)
       .buyersOf(ticketId);
-    return buyers.map((buyer) => ({ address: buyer[0], isApproved: buyer[1] }));
+    return buyers
+      .filter((buyer) => buyer[0] !== ZeroAddress)
+      .map((buyer) => ({ address: buyer[0], isApproved: buyer[1] }));
   }
 
   async approveBuyer(ticketId, buyer) {
@@ -146,5 +155,14 @@ export class BlockChainService {
       throw new Error('No wallet connected');
     }
     await this.contracts.ticket.connect(this.wallet).approve(ticketId, buyer);
+  }
+
+  async dismissBuyer(ticketId, buyer) {
+    if (!this.isConnected()) {
+      throw new Error('No wallet connected');
+    }
+    await this.contracts.ticket
+      .connect(this.wallet)
+      .dismissBuyer(ticketId, buyer);
   }
 }

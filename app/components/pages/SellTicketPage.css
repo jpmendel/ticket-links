@@ -41,6 +41,14 @@
   cursor: pointer;
 }
 
+.sell-cancel-container {
+  flex: 0 0 1;
+}
+
+.sell-cancel-button {
+  padding: 6px 16px !important;
+}
+
 .sell-buyer-list {
   display: flex;
   flex-direction: column;

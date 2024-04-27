@@ -1,13 +1,16 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import icons from '@primer/octicons';
 import { BlockChainContext } from '../contexts/BlockChainContext';
+import { TicketContext } from '../contexts/TicketContext';
 import { NavigationContext } from '../contexts/NavigationContext';
 import { Page } from '../../data/page';
 import './SellTicketPage.css';
 
 export const SellTicketPage = ({ ticket }) => {
   const { service } = useContext(BlockChainContext);
+  const { loadTickets } = useContext(TicketContext);
   const { navigate } = useContext(NavigationContext);
+
   const [buyers, setBuyers] = useState([]);
   const [isInitialLoaded, setInitialLoaded] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -28,6 +31,19 @@ export const SellTicketPage = ({ ticket }) => {
     }
   }, [service, isLoading, ticket.id]);
 
+  const cancelSale = useCallback(
+    async (ticketId) => {
+      try {
+        await service.cancelTicketSale(ticketId);
+        await loadTickets();
+        navigate(Page.MAIN);
+      } catch (error) {
+        console.error('Failed to cancel sale:', error);
+      }
+    },
+    [service, loadTickets, navigate],
+  );
+
   const approveBuyer = useCallback(
     async (ticketId, buyerAddr) => {
       try {
@@ -35,6 +51,18 @@ export const SellTicketPage = ({ ticket }) => {
         await loadBuyers();
       } catch (error) {
         console.error('Failed to approve buyer:', error);
+      }
+    },
+    [service, loadBuyers],
+  );
+
+  const dismissBuyer = useCallback(
+    async (ticketId, buyerAddr) => {
+      try {
+        await service.dismissBuyer(ticketId, buyerAddr);
+        await loadBuyers();
+      } catch (error) {
+        console.error('Failed to dismiss buyer:', error);
       }
     },
     [service, loadBuyers],
@@ -64,6 +92,15 @@ export const SellTicketPage = ({ ticket }) => {
             <div className="sell-title-container">
               <h1 className="text-title">{`Sell Ticket ${ticket.id}`}</h1>
             </div>
+            <div className="sell-cancel-container">
+              <button
+                className={'button-destructive text-body sell-cancel-button'}
+                type="button"
+                onClick={() => cancelSale(ticket.id)}
+              >
+                Cancel Sale
+              </button>
+            </div>
           </div>
           <div>
             {buyers.length > 0 ? (
@@ -88,6 +125,15 @@ export const SellTicketPage = ({ ticket }) => {
                           }}
                         >
                           {buyer.isApproved ? 'Approved' : 'Approve'}
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                          className={'button-secondary text-body'}
+                          type="button"
+                          onClick={() => dismissBuyer(ticket.id, buyer.address)}
+                        >
+                          Dismiss
                         </button>
                       </div>
                     </div>
