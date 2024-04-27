@@ -29,10 +29,12 @@ contract Ticket {
         _idCounter = 1;
     }
 
+    event TicketCreated(uint256 indexed ticketId);
+
     event TicketPurchased(
-        uint256 ticketId,
-        address sellerAddress,
-        address buyerAddress
+        uint256 indexed ticketId,
+        address indexed sellerAddress,
+        address indexed buyerAddress
     );
 
     modifier requireIsManager() {
@@ -96,7 +98,7 @@ contract Ticket {
         return _maxAmount;
     }
 
-    function create(uint256 _price) public requireIsManager returns (uint256) {
+    function create(uint256 _price) public requireIsManager {
         require(totalAmount() < maxAmount(), "Reached ticket limit");
         uint256 _ticketId = _idCounter;
         TicketInfo storage _ticket = _tickets[_ticketId];
@@ -105,7 +107,7 @@ contract Ticket {
         _ticket.price = _price;
         _ticket.needsApproval = false;
         _idCounter++;
-        return _ticketId;
+        emit TicketCreated(_ticketId);
     }
 
     function ownerOf(uint256 _ticketId) public view returns (address) {
@@ -192,44 +194,6 @@ contract Ticket {
         _clearSaleInfo(_ticketId);
     }
 
-    function requestPurchase(
-        uint256 _ticketId
-    ) public requireForSale(_ticketId) {
-        require(
-            _buyers[_ticketId][msg.sender].addr != msg.sender,
-            "Already a buyer"
-        );
-        BuyerInfo storage _buyer = _buyers[_ticketId][msg.sender];
-        _buyer.addr = msg.sender;
-        _buyer.isApproved = false;
-        _buyerAddresses[_ticketId].push(msg.sender);
-    }
-
-    function dismissBuyer(
-        uint256 _ticketId,
-        address _buyer
-    ) public requireIsOwner(_ticketId) {
-        delete _buyers[_ticketId][_buyer];
-        for (uint i = 0; i < _buyerAddresses[_ticketId].length; i++) {
-            if (_buyerAddresses[_ticketId][i] == _buyer) {
-                _buyerAddresses[_ticketId][i] = address(0);
-            }
-        }
-    }
-
-    function approve(
-        uint256 _ticketId,
-        address _recipient
-    ) public requireIsOwner(_ticketId) requireHasBuyer(_ticketId, _recipient) {
-        _buyers[_ticketId][_recipient].isApproved = true;
-    }
-
-    function isApproved(
-        uint256 _ticketId
-    ) public view requireIsBuyer(_ticketId) returns (bool) {
-        return _buyers[_ticketId][msg.sender].isApproved;
-    }
-
     function purchase(
         uint256 _ticketId
     ) public payable requireApproval(_ticketId) requireExactChange(_ticketId) {
@@ -253,6 +217,44 @@ contract Ticket {
             }
         }
         revert("No tickets found at that price");
+    }
+
+    function requestPurchase(
+        uint256 _ticketId
+    ) public requireForSale(_ticketId) {
+        require(
+            _buyers[_ticketId][msg.sender].addr != msg.sender,
+            "Already a buyer"
+        );
+        BuyerInfo storage _buyer = _buyers[_ticketId][msg.sender];
+        _buyer.addr = msg.sender;
+        _buyer.isApproved = false;
+        _buyerAddresses[_ticketId].push(msg.sender);
+    }
+
+    function isApproved(
+        uint256 _ticketId
+    ) public view requireIsBuyer(_ticketId) returns (bool) {
+        return _buyers[_ticketId][msg.sender].isApproved;
+    }
+
+    function approve(
+        uint256 _ticketId,
+        address _recipient
+    ) public requireIsOwner(_ticketId) requireHasBuyer(_ticketId, _recipient) {
+        _buyers[_ticketId][_recipient].isApproved = true;
+    }
+
+    function dismiss(
+        uint256 _ticketId,
+        address _buyer
+    ) public requireIsOwner(_ticketId) {
+        delete _buyers[_ticketId][_buyer];
+        for (uint i = 0; i < _buyerAddresses[_ticketId].length; i++) {
+            if (_buyerAddresses[_ticketId][i] == _buyer) {
+                _buyerAddresses[_ticketId][i] = address(0);
+            }
+        }
     }
 
     function increaseLimit(uint256 _max) public requireIsManager {
