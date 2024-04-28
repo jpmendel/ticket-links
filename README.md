@@ -1,10 +1,10 @@
 # Ticket Links
 
-A practice implementation of a blockchain-based ticket sales platform created with Solidity, React and web browser extensions.
+A practice implementation of a blockchain-based ticket sales platform created with Solidity, React and web browser extension.
 
 ## Setup
 
-1. Install Node.js with `brew install node` on MacOS, or by visiting the [website](https://nodejs.org/en/download).
+1. Install Node.js with your system package manager, or by visiting the [website](https://nodejs.org/en/download).
 2. Run `npm install` to install any required node modules.
 3. Open your web browser and go to the page where you can register a development browser extension.
 4. Add `extensions/wallet/manifest.json` as a browser extension and enable it.
