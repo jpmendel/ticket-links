@@ -74,6 +74,28 @@ describe('Ticket', () => {
         'Reached ticket limit',
       );
     });
+
+    it('manager can increase the max amount of tickets', async () => {
+      const startMax = await ticket.maxAmount();
+      expect(startMax).to.be.equal(10);
+
+      await ticket.connect(manager).increaseLimit(20);
+
+      const endMax = await ticket.maxAmount();
+      expect(endMax).to.be.equal(20);
+    });
+
+    it('manager cannot lower the max amount of tickets', async () => {
+      await expect(ticket.connect(manager).increaseLimit(5)).to.be.revertedWith(
+        'New amount must be greater than current max',
+      );
+    });
+
+    it('non-manager cannot change the ticket limit', async () => {
+      await expect(ticket.connect(user1).increaseLimit(20)).to.be.revertedWith(
+        'Must be ticket creator',
+      );
+    });
   });
 
   describe('Ticket Sale', () => {

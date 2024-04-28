@@ -1,4 +1,4 @@
-import { useContext, useCallback } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import { BlockChainContext } from '../contexts/BlockChainContext';
 import { AccountContext } from '../contexts/AccountContext';
 import { TicketContext } from '../contexts/TicketContext';
@@ -9,29 +9,43 @@ export const SoldByOthersView = () => {
   const { loadBalance } = useContext(AccountContext);
   const { ticketsForSale, loadTickets } = useContext(TicketContext);
 
+  const [isLoading, setLoading] = useState(false);
+
   const requestTicket = useCallback(
     async (ticketId) => {
+      if (isLoading) {
+        return;
+      }
+      setLoading(true);
       try {
         await service.requestTicket(ticketId);
         await loadTickets();
       } catch (error) {
         console.error('Failed to request ticket:', error);
+      } finally {
+        setLoading(false);
       }
     },
-    [service, loadTickets],
+    [service, isLoading, loadTickets],
   );
 
   const purchaseTicket = useCallback(
     async (ticketId, price) => {
+      if (isLoading) {
+        return;
+      }
+      setLoading(true);
       try {
         await service.purchaseTicket(ticketId, price);
         await loadBalance();
         await loadTickets();
       } catch (error) {
         console.error('Failed to purchase ticket:', error);
+      } finally {
+        setLoading(false);
       }
     },
-    [service, loadBalance, loadTickets],
+    [service, isLoading, loadBalance, loadTickets],
   );
 
   const soldByOthers = ticketsForSale.filter(

@@ -2,7 +2,6 @@
   "name": "ticket-links",
   "version": "0.5.0",
   "description": "A blockchain-based ticket sales platform.",
-  "author": "",
   "license": "GPL-3.0",
   "private": true,
   "scripts": {

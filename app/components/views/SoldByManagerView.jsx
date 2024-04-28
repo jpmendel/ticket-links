@@ -11,18 +11,25 @@ export const SoldByManagerView = () => {
   const { ticketsForSale, loadTickets } = useContext(TicketContext);
 
   const [ticketGroups, setTicketGroups] = useState([]);
+  const [isLoading, setLoading] = useState(false);
 
   const purchaseTicket = useCallback(
     async (price) => {
+      if (isLoading) {
+        return;
+      }
+      setLoading(true);
       try {
         await service.purchaseFirstAvailableTicket(addresses.manager, price);
         await loadBalance();
         await loadTickets();
       } catch (error) {
         console.error('Failed to purchase ticket:', error);
+      } finally {
+        setLoading(false);
       }
     },
-    [service, loadBalance, loadTickets],
+    [service, isLoading, loadBalance, loadTickets],
   );
 
   useEffect(() => {
@@ -45,6 +52,8 @@ export const SoldByManagerView = () => {
     );
   }, [service, ticketsForSale]);
 
+  const isPurchaseAvailable = service.isConnected() && !service.isManager();
+
   return (
     <div>
       <div className="sbm-title-container">
@@ -64,10 +73,10 @@ export const SoldByManagerView = () => {
                 </p>
                 <button
                   className={`${
-                    service.isConnected() ? 'button-primary' : 'button-disabled'
+                    isPurchaseAvailable ? 'button-primary' : 'button-disabled'
                   } text-body`}
                   type="button"
-                  disabled={!service.isConnected()}
+                  disabled={!isPurchaseAvailable}
                   onClick={() => purchaseTicket(group.price)}
                 >
                   Purchase

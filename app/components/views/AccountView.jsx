@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useState, useCallback, useContext } from 'react';
 import { BlockChainContext } from '../contexts/BlockChainContext';
 import { AccountContext } from '../contexts/AccountContext';
 import { TicketContext } from '../contexts/TicketContext';
@@ -13,29 +13,43 @@ export const AccountView = () => {
     useContext(TicketContext);
   const { navigate } = useContext(NavigationContext);
 
+  const [isLoading, setLoading] = useState(false);
+
   const listTicketForSale = useCallback(
     async (ticketId) => {
+      if (isLoading) {
+        return;
+      }
+      setLoading(true);
       try {
         await service.listTicket(ticketId);
         await loadTickets();
       } catch (error) {
-        console.error('Failed to purchase ticket:', error);
+        console.error('Failed to list ticket:', error);
+      } finally {
+        setLoading(false);
       }
     },
-    [service, loadTickets],
+    [service, isLoading, loadTickets],
   );
 
   const purchaseTicket = useCallback(
     async (ticketId, price) => {
+      if (isLoading) {
+        return;
+      }
+      setLoading(true);
       try {
         await service.purchaseTicket(ticketId, price);
         await loadBalance();
         await loadTickets();
       } catch (error) {
         console.error('Failed to purchase ticket:', error);
+      } finally {
+        setLoading(false);
       }
     },
-    [service, loadBalance, loadTickets],
+    [service, isLoading, loadBalance, loadTickets],
   );
 
   return (
@@ -57,14 +71,20 @@ export const AccountView = () => {
                     key={index}
                     ticket={ticket}
                     description={ticket.isForSale ? 'For sale' : 'Owned'}
-                    buttonText={ticket.isForSale ? 'Review' : 'Sell'}
-                    action={async () => {
-                      if (ticket.isForSale) {
-                        navigate(Page.SELL, { ticket });
-                      } else {
-                        await listTicketForSale(ticket.id);
-                      }
-                    }}
+                    buttonConfig={
+                      !service.isManager()
+                        ? {
+                            text: ticket.isForSale ? 'Review' : 'Sell',
+                            action: async () => {
+                              if (ticket.isForSale) {
+                                navigate(Page.SELL, { ticket });
+                              } else {
+                                await listTicketForSale(ticket.id);
+                              }
+                            },
+                          }
+                        : null
+                    }
                   />
                 ))}
                 {requestedTickets.map((ticket, index) => (
@@ -76,12 +96,14 @@ export const AccountView = () => {
                         ? 'Ready to purchase'
                         : 'Pending approval'
                     }
-                    buttonText={ticket.isApproved ? 'Purchase' : 'Pending'}
-                    buttonDisabled={!ticket.isApproved}
-                    action={async () => {
-                      if (ticket.isApproved) {
-                        await purchaseTicket(ticket.id, ticket.price);
-                      }
+                    buttonConfig={{
+                      text: ticket.isApproved ? 'Purchase' : 'Pending',
+                      disabled: !ticket.isApproved,
+                      action: async () => {
+                        if (ticket.isApproved) {
+                          await purchaseTicket(ticket.id, ticket.price);
+                        }
+                      },
                     }}
                   />
                 ))}
@@ -100,13 +122,7 @@ export const AccountView = () => {
   );
 };
 
-const TicketView = ({
-  ticket,
-  description,
-  buttonText,
-  buttonDisabled,
-  action,
-}) => (
+const TicketView = ({ ticket, description, buttonConfig }) => (
   <div className="account-ticket-outer">
     <div className="account-ticket-inner">
       <div className="account-ticket-title-container">
@@ -115,17 +131,19 @@ const TicketView = ({
         </h2>
         <p className="text-caption">{description}</p>
       </div>
-      <div>
-        <button
-          className={`${
-            buttonDisabled ? 'button-disabled' : 'button-primary'
-          } text-body account-sell-button`}
-          disabled={buttonDisabled}
-          onClick={() => action()}
-        >
-          {buttonText}
-        </button>
-      </div>
+      {buttonConfig && (
+        <div>
+          <button
+            className={`${
+              buttonConfig.disabled ? 'button-disabled' : 'button-primary'
+            } text-body account-sell-button`}
+            disabled={buttonConfig.disabled}
+            onClick={() => buttonConfig.action?.()}
+          >
+            {buttonConfig.text}
+          </button>
+        </div>
+      )}
     </div>
   </div>
 );

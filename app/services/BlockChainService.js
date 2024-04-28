@@ -19,11 +19,18 @@ export class BlockChainService {
     return this.wallet != null;
   }
 
+  isManager() {
+    if (!this.isConnected()) {
+      return false;
+    }
+    return this.wallet.address === addresses.manager;
+  }
+
   isTicketMine(ticket) {
     if (!this.isConnected()) {
       return false;
     }
-    return ticket.owner === this.wallet.address;
+    return this.wallet.address === ticket.owner;
   }
 
   isTicketSoldByManager(ticket) {

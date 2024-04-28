@@ -97,7 +97,11 @@ contract Ticket {
         return idCounter - 1;
     }
 
-    function changeLimit(uint256 _maxAmount) public requireIsManager {
+    function increaseLimit(uint256 _maxAmount) public requireIsManager {
+        require(
+            _maxAmount > maxAmount,
+            "New amount must be greater than current max"
+        );
         maxAmount = _maxAmount;
     }
 

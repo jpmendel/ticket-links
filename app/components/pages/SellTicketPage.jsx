@@ -16,7 +16,7 @@ export const SellTicketPage = ({ ticket }) => {
   const [isLoading, setLoading] = useState(false);
 
   const loadBuyers = useCallback(async () => {
-    if (!service || isLoading) {
+    if (isLoading) {
       return;
     }
     setLoading(true);
@@ -33,39 +33,57 @@ export const SellTicketPage = ({ ticket }) => {
 
   const cancelSale = useCallback(
     async (ticketId) => {
+      if (isLoading) {
+        return;
+      }
+      setLoading(true);
       try {
         await service.cancelTicketSale(ticketId);
         await loadTickets();
         navigate(Page.MAIN);
       } catch (error) {
         console.error('Failed to cancel sale:', error);
+      } finally {
+        setLoading(false);
       }
     },
-    [service, loadTickets, navigate],
+    [service, isLoading, loadTickets, navigate],
   );
 
   const approveBuyer = useCallback(
     async (ticketId, buyerAddr) => {
+      if (isLoading) {
+        return;
+      }
+      setLoading(true);
       try {
         await service.approveBuyer(ticketId, buyerAddr);
         await loadBuyers();
       } catch (error) {
         console.error('Failed to approve buyer:', error);
+      } finally {
+        setLoading(false);
       }
     },
-    [service, loadBuyers],
+    [service, isLoading, loadBuyers],
   );
 
   const dismissBuyer = useCallback(
     async (ticketId, buyerAddr) => {
+      if (isLoading) {
+        return;
+      }
+      setLoading(true);
       try {
         await service.dismissBuyer(ticketId, buyerAddr);
         await loadBuyers();
       } catch (error) {
         console.error('Failed to dismiss buyer:', error);
+      } finally {
+        setLoading(false);
       }
     },
-    [service, loadBuyers],
+    [service, isLoading, loadBuyers],
   );
 
   useEffect(() => {
