@@ -161,8 +161,6 @@ export class BlockChainService {
     if (!this.isConnected()) {
       throw new Error('No wallet connected');
     }
-    await this.contracts.ticket
-      .connect(this.wallet)
-      .dismissBuyer(ticketId, buyer);
+    await this.contracts.ticket.connect(this.wallet).dismiss(ticketId, buyer);
   }
 }

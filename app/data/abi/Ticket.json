@@ -8,7 +8,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_max",
+        "name": "_maxAmount",
         "type": "uint256"
       }
     ],
@@ -159,6 +159,19 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_maxAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "changeLimit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "_price",
         "type": "uint256"
       }
@@ -182,19 +195,6 @@
       }
     ],
     "name": "dismiss",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_max",
-        "type": "uint256"
-      }
-    ],
-    "name": "increaseLimit",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
