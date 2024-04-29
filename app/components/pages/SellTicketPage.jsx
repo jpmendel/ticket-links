@@ -87,6 +87,12 @@ export const SellTicketPage = ({ ticket }) => {
   );
 
   useEffect(() => {
+    if (!service.isTicketMine(ticket)) {
+      navigate(Page.MAIN);
+    }
+  }, [service, ticket, navigate]);
+
+  useEffect(() => {
     if (!isInitialLoaded) {
       loadBuyers();
     }
