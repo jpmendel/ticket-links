@@ -10,6 +10,8 @@
 }
 
 .accounts-item-outer {
+  flex: 1 0 0;
+  min-width: 0;
   padding: 8px;
   border: 1px solid gray;
   border-radius: 6px;
@@ -18,6 +20,7 @@
 
 .accounts-item-inner {
   display: flex;
+  overflow: hidden;
   gap: 8px;
 }
 
@@ -38,11 +41,23 @@
   background-color: #03C04A;
 }
 
+.accounts-info-container {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .accounts-item-name {
   font-weight: bold;
 }
 
+.accounts-item-address {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .accounts-delete-button-container {
+  flex: 0 0 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,4 +66,15 @@
 
 .accounts-delete-button {
   cursor: pointer;
+}
+
+.accounts-empty-state-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.accounts-empty-state-text {
+  font-weight: bold;
+  padding: 12px;
 }

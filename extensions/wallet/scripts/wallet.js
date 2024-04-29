@@ -1,4 +1,4 @@
-const main = async () => {
+const updateWallet = async () => {
   const { currentAccount } = await browser.storage.local.get(
     StorageKey.CURRENT_ACCOUNT,
   );
@@ -15,4 +15,9 @@ const main = async () => {
   window.postMessage({ type: 'wallet', data: null }, '*');
 };
 
-window.addEventListener('DOMContentLoaded', () => main());
+window.addEventListener('DOMContentLoaded', () => updateWallet());
+browser.runtime.onMessage.addListener((request) => {
+  if (request.message === Message.WALLET_UPDATE) {
+    updateWallet();
+  }
+});

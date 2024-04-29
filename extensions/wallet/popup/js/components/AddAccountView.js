@@ -53,6 +53,7 @@ class AddAccountView extends HTMLElement {
     nameContainer.className = 'add-account-input-container';
 
     const nameLabel = document.createElement('label');
+    nameLabel.className = 'add-account-label';
     nameLabel.setAttribute('for', 'name-input');
     nameLabel.innerText = 'Account Name';
 
@@ -82,6 +83,7 @@ class AddAccountView extends HTMLElement {
     addressContainer.className = 'add-account-input-container';
 
     const addressLabel = document.createElement('label');
+    addressLabel.className = 'add-account-label';
     addressLabel.setAttribute('for', 'address-input');
     addressLabel.innerText = 'Account Address';
 
@@ -113,6 +115,7 @@ class AddAccountView extends HTMLElement {
     privateKeyContainer.className = 'add-account-input-container';
 
     const privateKeyLabel = document.createElement('label');
+    privateKeyLabel.className = 'add-account-label';
     privateKeyLabel.setAttribute('for', 'private-key-input');
     privateKeyLabel.innerText = 'Private Key';
 
@@ -144,6 +147,7 @@ class AddAccountView extends HTMLElement {
     chainUrlContainer.className = 'add-account-input-container';
 
     const chainUrlLabel = document.createElement('label');
+    chainUrlLabel.className = 'add-account-label';
     chainUrlLabel.setAttribute('for', 'chain-url-input');
     chainUrlLabel.innerText = 'Chain URL';
 

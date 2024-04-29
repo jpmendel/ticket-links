@@ -9,18 +9,37 @@ class AccountsView extends HTMLElement {
 
   async connectAccount(index) {
     await browser.storage.local.set({ [StorageKey.CURRENT_ACCOUNT]: index });
+    await this.updateWallet();
     this.render();
   }
 
   async disconnectAccount() {
     await browser.storage.local.remove(StorageKey.CURRENT_ACCOUNT);
+    await this.updateWallet();
     this.render();
   }
 
   async deleteAccount(accounts, accountIndex) {
     const newAccounts = accounts.filter((_, index) => index !== accountIndex);
     await browser.storage.local.set({ [StorageKey.ACCOUNTS]: newAccounts });
+    await this.updateWallet();
     this.render();
+  }
+
+  async updateWallet() {
+    try {
+      const tabs = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      for (const tab of tabs) {
+        await browser.tabs.sendMessage(tab.id, {
+          message: Message.WALLET_UPDATE,
+        });
+      }
+    } catch (error) {
+      console.warn('Skipped sending wallet update message:', error);
+    }
   }
 
   render() {
@@ -32,7 +51,16 @@ class AccountsView extends HTMLElement {
       .get([StorageKey.ACCOUNTS, StorageKey.CURRENT_ACCOUNT])
       .then(({ accounts, currentAccount }) => {
         listContainer.innerHTML = '';
-        if (!accounts) {
+        if (!accounts || accounts.length === 0) {
+          const noAccountsContainer = document.createElement('div');
+          noAccountsContainer.className = 'accounts-empty-state-container';
+
+          const noAccountsText = document.createElement('div');
+          noAccountsText.className = 'accounts-empty-state-text';
+          noAccountsText.innerText = 'No Accounts';
+
+          noAccountsContainer.appendChild(noAccountsText);
+          listContainer.appendChild(noAccountsContainer);
           return;
         }
         for (let index = 0; index < accounts.length; index++) {
@@ -66,6 +94,7 @@ class AccountsView extends HTMLElement {
           accountItemInner.appendChild(statusContainer);
 
           const infoContainer = document.createElement('div');
+          infoContainer.className = 'accounts-info-container';
 
           const name = document.createElement('div');
           name.className = 'accounts-item-name';
@@ -73,13 +102,12 @@ class AccountsView extends HTMLElement {
           infoContainer.appendChild(name);
 
           const address = document.createElement('div');
-          address.innerText = `Address: ${account.address}`;
+          address.className = 'accounts-item-address';
+          address.innerText = account.address;
           infoContainer.appendChild(address);
 
           accountItemInner.appendChild(infoContainer);
-
           accountItemOuter.appendChild(accountItemInner);
-
           row.appendChild(accountItemOuter);
 
           const deleteButtonContainer = document.createElement('div');
@@ -89,15 +117,14 @@ class AccountsView extends HTMLElement {
           deleteButton.className = 'accounts-delete-button';
           deleteButton.innerHTML = IconImage.DELETE;
           deleteButton.onclick = async () => {
-            await this.deleteAccount(accounts, index);
             if (isCurrent) {
               await browser.storage.local.remove(StorageKey.CURRENT_ACCOUNT);
             }
+            await this.deleteAccount(accounts, index);
           };
           deleteButtonContainer.appendChild(deleteButton);
 
           row.appendChild(deleteButtonContainer);
-
           listContainer.appendChild(row);
         }
       });
