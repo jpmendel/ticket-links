@@ -30,7 +30,7 @@ class AddAccountView extends HTMLElement {
       const newAccounts = [...accounts, newAccount];
       await browser.storage.local.set({ [StorageKey.ACCOUNTS]: newAccounts });
     }
-    await navigate('accounts-view');
+    await navigate(Page.ACCOUNTS_LIST);
   }
 
   render() {
@@ -192,7 +192,7 @@ class AddAccountView extends HTMLElement {
     cancelButton.type = 'button';
     cancelButton.innerText = 'Cancel';
     cancelButton.onclick = async () => {
-      await navigate('accounts-view');
+      await navigate(Page.ACCOUNTS_LIST);
     };
 
     cancelButtonContainer.appendChild(cancelButton);

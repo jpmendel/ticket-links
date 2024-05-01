@@ -36,11 +36,13 @@ const main = async () => {
     try {
       const fileContent = fs.readFileSync(addressesPath, { encoding: 'utf-8' });
       addresses = JSON.parse(fileContent);
-    } catch {}
+    } catch {
+      // If file does not exist, it will be created.
+    }
 
     addresses.ticket = address;
     addresses.manager = manager.address;
-    fs.writeFileSync(addressesPath, JSON.stringify(addresses, null, 2));
+    fs.writeFileSync(addressesPath, JSON.stringify(addresses, null, 2) + '\n');
 
     console.log(`Deployed Ticket at: ${address}`);
   } catch (error) {

@@ -12,7 +12,7 @@
     "start:app": "vite",
     "start:chain": "hardhat node",
     "build": "vite build",
-    "compile": "hardhat compile && node scripts/postCompile.js",
+    "compile": "hardhat compile && node scripts/post-compile.js",
     "deploy": "hardhat run scripts/deploy.js --network localhost",
     "test": "hardhat test",
     "test:gas": "REPORT_GAS=true hardhat test"

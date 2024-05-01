@@ -13,7 +13,7 @@ const main = async () => {
       const abiPath = path.join(__dirname, `../app/data/abi/${contract}.json`);
       const content = fs.readFileSync(infoPath, { encoding: 'utf-8' });
       const info = JSON.parse(content);
-      fs.writeFileSync(abiPath, JSON.stringify(info.abi, null, 2));
+      fs.writeFileSync(abiPath, JSON.stringify(info.abi, null, 2) + '\n');
       console.log(`Copied ${contract} ABI file`);
     }
   } catch (error) {

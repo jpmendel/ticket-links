@@ -1,4 +1,4 @@
-class AccountsView extends HTMLElement {
+class AccountListView extends HTMLElement {
   constructor() {
     super();
   }
@@ -46,17 +46,17 @@ class AccountsView extends HTMLElement {
     const mainContainer = document.createElement('div');
 
     const listContainer = document.createElement('div');
-    listContainer.className = 'accounts-list-container';
+    listContainer.className = 'account-list-container';
     browser.storage.local
       .get([StorageKey.ACCOUNTS, StorageKey.CURRENT_ACCOUNT])
       .then(({ accounts, currentAccount }) => {
         listContainer.innerHTML = '';
         if (!accounts || accounts.length === 0) {
           const noAccountsContainer = document.createElement('div');
-          noAccountsContainer.className = 'accounts-empty-state-container';
+          noAccountsContainer.className = 'account-list-empty-state-container';
 
           const noAccountsText = document.createElement('div');
-          noAccountsText.className = 'accounts-empty-state-text';
+          noAccountsText.className = 'account-list-empty-state-text';
           noAccountsText.innerText = 'No Accounts';
 
           noAccountsContainer.appendChild(noAccountsText);
@@ -67,65 +67,19 @@ class AccountsView extends HTMLElement {
           const account = accounts[index];
           const isCurrent = index === currentAccount;
 
-          const row = document.createElement('div');
-          row.className = 'accounts-list-row';
-
-          const accountItemOuter = document.createElement('div');
-          accountItemOuter.className = 'accounts-item-outer';
-          accountItemOuter.onclick = async () => {
-            if (isCurrent) {
-              await this.disconnectAccount();
-            } else {
-              await this.connectAccount(index, account);
-            }
-          };
-
-          const accountItemInner = document.createElement('div');
-          accountItemInner.className = 'accounts-item-inner';
-
-          const statusContainer = document.createElement('div');
-          statusContainer.className = 'accounts-item-status-container';
-
-          const status = document.createElement('div');
-          status.className =
-            'accounts-item-status' + (isCurrent ? ' active' : '');
-          statusContainer.appendChild(status);
-
-          accountItemInner.appendChild(statusContainer);
-
-          const infoContainer = document.createElement('div');
-          infoContainer.className = 'accounts-info-container';
-
-          const name = document.createElement('div');
-          name.className = 'accounts-item-name';
-          name.innerText = account.name;
-          infoContainer.appendChild(name);
-
-          const address = document.createElement('div');
-          address.className = 'accounts-item-address';
-          address.innerText = account.address;
-          infoContainer.appendChild(address);
-
-          accountItemInner.appendChild(infoContainer);
-          accountItemOuter.appendChild(accountItemInner);
-          row.appendChild(accountItemOuter);
-
-          const deleteButtonContainer = document.createElement('div');
-          deleteButtonContainer.className = 'accounts-delete-button-container';
-
-          const deleteButton = document.createElement('div');
-          deleteButton.className = 'accounts-delete-button';
-          deleteButton.innerHTML = IconImage.DELETE;
-          deleteButton.onclick = async () => {
+          const accountView = document.createElement('account-view');
+          accountView.account = account;
+          accountView.isCurrent = isCurrent;
+          accountView.connectAccount = async () => this.connectAccount(index);
+          accountView.disconnectAccount = async () => this.disconnectAccount();
+          accountView.deleteAccount = async () => {
             if (isCurrent) {
               await browser.storage.local.remove(StorageKey.CURRENT_ACCOUNT);
             }
             await this.deleteAccount(accounts, index);
           };
-          deleteButtonContainer.appendChild(deleteButton);
 
-          row.appendChild(deleteButtonContainer);
-          listContainer.appendChild(row);
+          listContainer.appendChild(accountView);
         }
       });
 
@@ -136,7 +90,7 @@ class AccountsView extends HTMLElement {
     addButton.type = 'button';
     addButton.innerText = 'Add Account';
     addButton.onclick = async () => {
-      await navigate('add-account-view');
+      await navigate(Page.ADD_ACCOUNT);
     };
 
     addButtonContainer.appendChild(addButton);
@@ -147,4 +101,4 @@ class AccountsView extends HTMLElement {
   }
 }
 
-customElements.define('accounts-view', AccountsView);
+customElements.define('account-list-view', AccountListView);

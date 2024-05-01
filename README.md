@@ -1,6 +1,6 @@
 # Ticket Links
 
-A practice implementation of a blockchain-based ticket sales platform created with Solidity, React and web browser extension.
+A practice implementation of a blockchain-based ticket sales platform created with Solidity, JavaScript and React.
 
 ## Setup
 

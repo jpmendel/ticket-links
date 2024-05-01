@@ -1,15 +1,8 @@
-.accounts-list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.accounts-list-row {
+.account-container {
   display: flex;
 }
 
-.accounts-item-outer {
+.account-outer {
   flex: 1 0 0;
   min-width: 0;
   padding: 8px;
@@ -18,45 +11,45 @@
   cursor: pointer;
 }
 
-.accounts-item-inner {
+.account-inner {
   display: flex;
   overflow: hidden;
   gap: 8px;
 }
 
-.accounts-item-status-container {
+.account-status-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.accounts-item-status {
+.account-status {
   background-color: #FFBF00;
   width: 20px;
   height: 20px;
   border-radius: 99px;
 }
 
-.accounts-item-status.active {
+.account-status.active {
   background-color: #03C04A;
 }
 
-.accounts-info-container {
+.account-info-container {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.accounts-item-name {
+.account-name {
   font-weight: bold;
 }
 
-.accounts-item-address {
+.account-address {
   font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.accounts-delete-button-container {
+.account-delete-button-container {
   flex: 0 0 1;
   display: flex;
   justify-content: center;
@@ -64,17 +57,6 @@
   padding: 12px;
 }
 
-.accounts-delete-button {
+.account-delete-button {
   cursor: pointer;
-}
-
-.accounts-empty-state-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.accounts-empty-state-text {
-  font-weight: bold;
-  padding: 12px;
 }
