@@ -4,6 +4,10 @@
   "description": "A blockchain-based ticket sales platform.",
   "license": "GPL-3.0",
   "private": true,
+  "engines": {
+    "node": "^20",
+    "npm": "^10"
+  },
   "scripts": {
     "start:app": "vite",
     "start:chain": "hardhat node",
